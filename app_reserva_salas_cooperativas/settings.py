@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',  # notificações de alerta do sistema
     'django.contrib.staticfiles',  # arquivos estáticos
     'core',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -100,9 +101,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -117,3 +118,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TEST_RUNNER="redgreenunittest.django.runner.RedGreenDiscoverRunner"
