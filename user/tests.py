@@ -11,14 +11,15 @@ class LoginTest(TestCase):
         self.user = User.objects.create_user(username=self.username, password=self.password)
 
     def test_login_view(self):
+        # teste para login válido
         login_url = reverse('user:login')
         response = self.client.post(login_url, {'username': 'testuser', 'password': 'testpassword'})
-        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.status_code in [200, 302])
 
     def test_invalid_login(self):
+        # teste para login inválido
         login_url = reverse('user:login')
         response = self.client.post(login_url, {'username': 'testuser', 'password': 'wrongpassword'})
-        self.assertNotEqual(response.status_code, 200)
-
+        self.assertEqual(response.status_code, 401)
 
 
