@@ -126,3 +126,12 @@ TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
 
 LOGIN_URL = 'user:login'
 LOGOUT_REDIRECT_URL = 'core:index'
+
+from django.contrib.messages import constants as messages_constants
+MESSAGE_TAGS = {
+    messages_constants.DEBUG: 'primary',
+    messages_constants.INFO: 'info',
+    messages_constants.SUCCESS: 'success',
+    messages_constants.WARNING: 'warning bg-warning text-white border-0',
+    messages_constants.ERROR: 'danger',
+}

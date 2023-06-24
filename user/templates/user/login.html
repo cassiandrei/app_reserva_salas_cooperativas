@@ -15,15 +15,35 @@
 <div class="container d-flex align-items-center h-100">
     <div class="row justify-content-center">
         <div class="col-10 col-md-6 col-lg-4">
-            <img class="mt-5 mb-5" src="{% static 'core/images/hcc/logo.png' %}" width="100%">
-            <h4 class="mb-3">Bem vindo à HCC Reserva de Salas</h4>
+            <img class="mb-5" src="{% static 'core/images/hcc/logo.png' %}" width="100%">
+            <h5 class="mb-3">Bem vindo à HCC Reserva de Salas</h5>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" role="alert">
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                            <i class="mdi mdi-alert-remove"></i> Erro!
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                            <i class="mdi mdi-thumb-up-outline"></i> Sucesso!
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                            <i class="mdi mdi-alert"></i> Atenção!
+                        {% else %}
+                            <i class="mdi mdi-information-variant"></i> Notificação:
+                        {% endif %}
+                        <p>
+                            {{ message|linebreaksbr|safe }}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="d-grid gap-2 col-4 mx-auto">
                     <button class="btn btn-primary" type="submit">
                         <i class="bi bi-arrow-bar-right"></i>
-                            Login
+                        Login
                     </button>
                 </div>
             </form>
