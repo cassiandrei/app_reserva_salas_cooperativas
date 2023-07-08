@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # arquivos estáticos
     'core',
     'user',
+    'reservas',
 ]
 
 MIDDLEWARE = [
