@@ -1,0 +1,7 @@
+- model: reservas.configagendasala
+  pk: 1
+  fields:
+    nome: Padrão
+    horario_abertura: '07:30:00'
+    horario_encerramento: '19:00:00'
+    duracao_minima_reserva: 30

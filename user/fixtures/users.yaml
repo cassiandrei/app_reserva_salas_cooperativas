@@ -1,0 +1,45 @@
+- model: auth.user
+  pk: 1
+  fields:
+    password: pbkdf2_sha256$600000$inJp7ZFXmBTtvS47cRr11B$sI+2WX7ULnhRDC9caAmVyRZpKlfxevbqAFSuoiHgQyo=
+    last_login: 2023-05-31 22:54:24+00:00
+    is_superuser: false
+    username: cassiano
+    first_name: Cassiano Andrei
+    last_name: Schneider
+    email: cassiandrei@gmail.com
+    is_staff: false
+    is_active: true
+    date_joined: 2023-05-31 22:53:38+00:00
+    groups: []
+    user_permissions: []
+- model: auth.user
+  pk: 2
+  fields:
+    password: pbkdf2_sha256$600000$3Cq2EHs0W7Dtr7IYJr9zOW$0dAXfnkPFmBuPwNHLDqfCivl3QIfEaFf7sseY2IIn40=
+    last_login: 2023-05-31 22:57:59.181077+00:00
+    is_superuser: false
+    username: joao
+    first_name: 'João Cleber'
+    last_name: 'Santos'
+    email: 'joao@gmail.com'
+    is_staff: true
+    is_active: true
+    date_joined: 2023-05-31 22:55:33+00:00
+    groups: []
+    user_permissions: []
+- model: auth.user
+  pk: 3
+  fields:
+    password: pbkdf2_sha256$600000$Py6iJ0Z4ZzIhrnJnjTagSC$Brp06I/z8quznQXgyUV/QJYwK85AjO2bN8HPr1hTOY0=
+    last_login: 2023-07-22 13:57:03.517008+00:00
+    is_superuser: true
+    username: admin
+    first_name: ''
+    last_name: ''
+    email: admin@admin.com
+    is_staff: true
+    is_active: true
+    date_joined: 2023-06-10 14:24:48.866159+00:00
+    groups: []
+    user_permissions: []

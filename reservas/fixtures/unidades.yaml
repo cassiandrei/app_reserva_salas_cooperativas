@@ -1,0 +1,15 @@
+- model: reservas.unidade
+  pk: 1
+  fields:
+    nome: HCC Camobi
+    slug: camobi
+- model: reservas.unidade
+  pk: 2
+  fields:
+    nome: HCC Complexo
+    slug: complexo
+- model: reservas.unidade
+  pk: 3
+  fields:
+    nome: HCC Ibirubá
+    slug: ibiruba

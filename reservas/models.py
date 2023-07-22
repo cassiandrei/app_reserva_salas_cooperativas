@@ -6,12 +6,23 @@ def get_config_padrao():
     return 1  # pk da config padrão
 
 
-# Create your models here.
+class Unidade(models.Model):
+    nome = models.CharField("Nome", max_length=50)
+    slug = models.SlugField(max_length=50, unique=True, null=True)
+
+    def __str__(self):
+        return self.nome
+
+
 class Sala(models.Model):
     nome = models.CharField("Nome", max_length=50)
+    slug = models.SlugField(max_length=50, unique=True, null=True)
     imagem = models.ImageField("Imagem", upload_to="salas")
     ativo = models.BooleanField("Ativo", default=True)
-    config = models.ForeignKey('reservas.ConfigAgendaSala', on_delete=models.SET(get_config_padrao), null=True)
+    config = models.ForeignKey(
+        "reservas.ConfigAgendaSala", on_delete=models.SET(get_config_padrao),
+    )
+    unidade = models.ForeignKey("reservas.Unidade", on_delete=models.PROTECT)
 
     def __str__(self):
         return self.nome
@@ -34,7 +45,9 @@ class ConfigAgendaSala(models.Model):
     nome = models.CharField("Nome", max_length=20)
     horario_abertura = models.TimeField("Horário Abertura da Sala")
     horario_encerramento = models.TimeField("Horário Encerramento da Sala")
-    duracao_minima_reserva = models.PositiveSmallIntegerField("Duração em minutos miníma pra reserva")
+    duracao_minima_reserva = models.PositiveSmallIntegerField(
+        "Duração em minutos miníma pra reserva"
+    )
 
     def __str__(self):
         return self.nome

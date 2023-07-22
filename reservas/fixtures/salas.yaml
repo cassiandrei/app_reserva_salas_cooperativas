@@ -1,0 +1,27 @@
+- model: reservas.sala
+  pk: 1
+  fields:
+    nome: Ética
+    imagem: salas/6-itens-indispensaveis-na-sua-sala-de-reuniao-ff7d16890d603833378cf62a4908ea451664_gk4wDW9.jpg
+    ativo: true
+    config: 1
+    unidade: 2
+    slug: etica
+- model: reservas.sala
+  pk: 2
+  fields:
+    nome: Segurança
+    imagem: salas/01871_04.jpg
+    ativo: true
+    config: 1
+    unidade: 2
+    slug: seguranca
+- model: reservas.sala
+  pk: 3
+  fields:
+    nome: Sala Térreo
+    imagem: salas/Foto-2-Piano.jpg
+    ativo: true
+    config: 1
+    unidade: 1
+    slug: sala_terreo
