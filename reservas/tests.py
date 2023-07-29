@@ -8,7 +8,7 @@ from reservas.models import Unidade
 class ReservasTest(TestCase):
     fixtures = ["users.yaml", "configsalas.yaml", "unidades.yaml", "salas.yaml"]
 
-    def test_contatem_unidades(self):
+    def test_tela_inicial_redirect(self):
         """
         Tela de unidades deve exibir todas unidades cadastradas
         """
@@ -35,20 +35,52 @@ class ReservasTest(TestCase):
             response.url, {"username": self.user.username, "password": "teste1234"}
         )
 
-        # testando se o usuario está sendo redirecionado para a rota inicial
+        # testando se o usuario está sendo redirecionado para unidades url
         self.assertEqual(response.url, rota_inicial)
 
-        # fazendo o get na rota inicial
+        # realizando o acesso na url da rota inicial
         response = self.client.get(response.url)
+
+        # teste de redirecionamento
+        # get a URL das unidades
+        index_unidades_url = reverse("reservas:unidades")
+        self.assertRedirects(response, index_unidades_url)
+
+    def test_contagem_unidades(self):
+        """
+        Tela de unidades deve exibir todas unidades cadastradas
+        """
+
+        # get usuário pk=1 (cassiano)
+        self.user = User.objects.first()
+        self.user.set_password('teste1234')
+        self.user.save()
+
+        # get a URL de login
+        login_url = reverse("user:login")
+
+        # rota raíz
+        rota_inicial = "/"
 
         # get a URL das unidades
         index_unidades_url = reverse("reservas:unidades")
 
-        # testando se o usuario está sendo redirecionado para a tela das unidades
-        self.assertRedirects(response, index_unidades_url)
+        # fazendo um GET na url
+        response = self.client.get(index_unidades_url)
+
+        # testando se o usuario não autenticado está sendo redirecionado
+        self.assertRedirects(response, f"{login_url}?next={index_unidades_url}")
+
+        # fazer um POST na tela de login
+        response = self.client.post(
+            response.url, {"username": self.user.username, "password": "teste1234"}
+        )
+
+        # testando se o usuario está sendo redirecionado para unidades url
+        self.assertEqual(response.url, index_unidades_url)
 
         # realizando o acesso na url unidades
-        response = self.client.get(response)
+        response = self.client.get(response.url)
 
         for unidade in Unidade.objects.filter(ativo=True):
             # Testando se o nome da unidade  sendo exibido
