@@ -59,9 +59,6 @@ class ReservasTest(TestCase):
         # get a URL de login
         login_url = reverse("user:login")
 
-        # rota raíz
-        rota_inicial = "/"
-
         # get a URL das unidades
         index_unidades_url = reverse("reservas:unidades")
 
