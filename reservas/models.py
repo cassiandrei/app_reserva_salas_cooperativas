@@ -9,6 +9,7 @@ def get_config_padrao():
 class Unidade(models.Model):
     nome = models.CharField("Nome", max_length=50)
     slug = models.SlugField(max_length=50, unique=True, null=True)
+    ativo = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nome

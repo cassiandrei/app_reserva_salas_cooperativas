@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+  <div class="row justify-content-center text-center">
+    <div class="col-12 mt-4">
+      <h3>Lista das unidades</h3>
+    </div>
+    <div class="col-12 mt-2">
+      <span>Selecione uma das unidades para
+        visualizar as salas disponíveis para reserva</span>
+    </div>
+
+    <div class="row">
+      {% include 'reservas/unidades/unidade.html' %}
+      {% include 'reservas/unidades/unidade.html' %}
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block footer %}
+  <style>
+      .footer_inicial {
+          color: grey;
+          margin-bottom: 20px;
+          margin-top: 20px;
+      }
+  </style>
+
+  <div class="row justify-content-center text-center footer_inicial">
+    <div class="col-12">
+      <span>2023 © HCC Energia Solar</span>
+    </div>
+    <div class="col-12">
+      <span style="font-size: small;">Desenvolvido pela turma Mentoria Python 2023</span>
+    </div>
+  </div>
+{% endblock %}
