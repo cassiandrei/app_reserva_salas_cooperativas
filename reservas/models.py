@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.shortcuts import reverse
 
 
 def get_config_padrao():
@@ -10,6 +11,9 @@ class Unidade(models.Model):
     nome = models.CharField("Nome", max_length=50)
     slug = models.SlugField(max_length=50, unique=True, null=True)
     ativo = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse("reservas:unidade", kwargs={"slug": self.slug})
 
     def __str__(self):
         return self.nome

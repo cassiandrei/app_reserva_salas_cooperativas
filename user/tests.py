@@ -6,6 +6,7 @@ from django.urls import reverse
 # Create your tests here.
 class LoginTest(TestCase):
     def setUp(self):
+
         # usuario ativo
         self.username = "testuser"
         self.password = "testpassword"

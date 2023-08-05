@@ -7,19 +7,16 @@
         padding-top: 10px;
         color: white;
         margin-top: 10px;
-
+        width: 300px;
     }
 </style>
 
-<div class="row">
-  <div class="col-sm-3 offset-sm-4">
-    <a style="text-decoration: none;">
-      <div class="shadow unidade_button">
-        <b>HCC Camobi</b>
-      </div>
-    </a>
+
+<a href="{{ unidade.get_absolute_url }}" class="d-flex justify-content-center" style="text-decoration: none;" role="button">
+  <div class="shadow unidade_button">
+    <b>{{ unidade.nome }}</b>
   </div>
-</div>
+</a>
 
 
 
