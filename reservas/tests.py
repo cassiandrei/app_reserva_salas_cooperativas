@@ -1,22 +1,36 @@
+import datetime
+import os
+
+import requests
 from django.shortcuts import reverse
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth.models import User
 
-from reservas.models import Unidade
+from reservas.models import Unidade, Sala
 
 
 class ReservasTest(TestCase):
     fixtures = ["users.yaml", "configsalas.yaml", "unidades.yaml", "salas.yaml"]
 
-    def test_tela_inicial_redirect(self):
-        """
-        Tela de unidades deve exibir todas unidades cadastradas
-        """
-
+    def setUp(self) -> None:
         # get usuário pk=1 (cassiano)
         self.user = User.objects.first()
         self.user.set_password('teste1234')
         self.user.save()
+
+        self.client_autenticado = Client()
+        self.client_autenticado.force_login(self.user)
+
+
+class TelaInicialUnidades(ReservasTest):
+    '''
+        Tela da lista das unidades
+    '''
+
+    def test_tela_inicial_redirect(self):
+        """
+        Tela de unidades deve exibir todas unidades cadastradas
+        """
 
         # get a URL de login
         login_url = reverse("user:login")
@@ -90,3 +104,82 @@ class ReservasTest(TestCase):
             # testando se o link está sendo exibido
             link = reverse("reservas:unidade", kwargs={"slug": unidade.slug})
             self.assertContains(response, f'href="{link}"')
+
+
+class TelaCarroselUnidade(ReservasTest):
+    '''
+        Tela Carrosel Unidade
+    '''
+
+    def test_usuario_logado(self):
+        # get a URL de login
+        login_url = reverse("user:login")
+
+        sala = Sala.objects.first()
+
+        # rota da sala
+        url_sala = reverse('reservas:unidade', kwargs={"slug": sala.slug})
+
+        # fazendo um GET na URL
+        response = self.client.get(url_sala)
+
+        # testando se o usuario não autenticado está sendo redirecionado para tela login
+        self.assertRedirects(response, f"{login_url}?next={url_sala}")
+
+    def test_componentes_basicos_carrosel(self):
+        # consulta todas unidades ativas
+        salas = Sala.objects.filter(ativo=True)
+
+        for sala in salas:
+            # acessando a tela da sala (carrosel)
+            url_carrosel = reverse('reservas:unidade', kwargs={"slug": sala.slug})
+            response = self.client.get(url_carrosel)
+
+            # Teste para verificar componente de selecionar data
+            self.assertContains(response, 'id="componente_selecionar_data"',
+                                msg_prefix="Componente de selecionar data não está sendo exibida")
+
+            # Teste para verificar se a imagem está exibida
+            self.assertContains(response, 'id="imagem_sala"',
+                                msg_prefix="Componente de selecionar data não está sendo exibida")
+
+            # Teste para verificar se a tabela de hoŕarios está sendo exibida
+            self.assertContains(response, 'id="lista_horarios"',
+                                msg_prefix="Componente de selecionar data não está sendo exibida")
+
+    def test_imagem_nome_sala_correspondente(self):
+        # consulta todas unidades ativas
+        salas = Sala.objects.filter(ativo=True)
+
+        for sala in salas:
+            # acessando a tela da sala (carrosel)
+            url_carrosel = reverse('reservas:unidade', kwargs={"slug": sala.slug})
+
+            # teste para verificar o nome do arquivo correspondente a sala
+            nome_arquivo_image_sala = os.path.basename(sala.imagem.name)
+            self.assertEqual(str(sala.pk), nome_arquivo_image_sala.split('.')[0])
+
+            # testando se o caminho da imagem está sendo exibida na tela
+            url_imagem = sala.imagem.url
+            response = self.client_autenticado.get(url_carrosel)
+            self.assertContains(response, f'src="{url_imagem}"')
+
+            # testando se o nome da sala está sendo exibido na tela
+            self.assertContains(response, f'<span>{sala.nome}</span>')
+
+            # teste pra verificar se o arquivo está carregando (sendo exibida)
+            response = requests.get("http://127.0.0.1:8000" + url_imagem)
+            self.assertEqual(response.status_code, 200)
+
+            # verificar o content-type do response
+            self.assertTrue(response.headers['Content-Type'].startswith('image/'))
+
+    def test_sala_sem_reservas(self):
+        dia_hoje = datetime.date.today()
+        horario_inicial = datetime.datetime(dia_hoje.year, dia_hoje.month, dia_hoje.day, 5, 0, 0)
+        sala = Sala.objects.filter(ativo=True)
+        sala.reserva_set.all()
+
+        # todo Verificar o motivo do self.client.get(url_arquivo) sempre retornar 404
+
+        # todo Verificar solução do teste test_sala_sem_reservas em questão da sensibilidade do horário

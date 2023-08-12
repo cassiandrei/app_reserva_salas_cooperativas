@@ -2,7 +2,7 @@
   pk: 1
   fields:
     nome: Ética
-    imagem: salas/6-itens-indispensaveis-na-sua-sala-de-reuniao-ff7d16890d603833378cf62a4908ea451664_gk4wDW9.jpg
+    imagem: salas/1.jpg
     ativo: true
     config: 1
     unidade: 2
@@ -11,7 +11,7 @@
   pk: 2
   fields:
     nome: Segurança
-    imagem: salas/01871_04.jpg
+    imagem: salas/2.jpg
     ativo: true
     config: 1
     unidade: 2
@@ -20,7 +20,7 @@
   pk: 3
   fields:
     nome: Sala Térreo
-    imagem: salas/Foto-2-Piano.jpg
+    imagem: salas/3.jpg
     ativo: true
     config: 1
     unidade: 1
