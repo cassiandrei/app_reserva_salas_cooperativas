@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ unidade }}{% endblock %}
+
+{% block content %}
+
+  <div class="row mb-3 mt-2">
+
+    {# Selecionar data #}
+    <div class="col-4">
+      <div class="input-group">
+        <button type="button" class="btn btn-outline-secondary" id="componente_selecionar_data"><i class="bi bi-calendar"></i> Selecione
+          uma data
+        </button>
+      </div>
+    </div>
+
+    {# Selecionar a sala #}
+    <div class="col-4">
+      <p>{{ sala }}</p>
+    </div>
+
+    {# Botão link para visualizar a sala na semana #}
+    <div class="col-4">
+
+    </div>
+  </div>
+
+  <div class="row">
+
+    <img id="imagem_sala" src="{{ sala.imagem.url }}" class="d-block w-100" alt="...">
+
+  </div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script>
+      $(document).ready(function () {
+          $('#componente_selecionar_data').datepicker({
+              format: 'yyyy-mm-dd',
+              todayHighlight: true,
+              autoclose: true
+          }).on('changeDate', function (e) {
+              // Atualizar o texto do botão com a data selecionada
+              var selectedDate = e.format('dd/mm');
+              $(this).html('<i class=" bi bi-calendar"></i> ' + selectedDate);
+          });
+      });
+  </script>
+{% endblock %}
+
+
+
+

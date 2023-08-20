@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from reservas.models import Unidade
+from reservas.models import Unidade, Sala
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -24,7 +24,9 @@ class UnidadesListView(ListView, LoginRequiredMixin):
 
 @login_required
 def unidade(request, slug):
+    unidade = get_object_or_404(Unidade, slug=slug)
+    sala = unidade.todas_salas.first()
     context = {
-
+        'sala': sala,
     }
     return render(request, 'reservas/unidade/index.html', context=context)

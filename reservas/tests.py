@@ -133,7 +133,7 @@ class TelaCarroselUnidade(ReservasTest):
         for sala in salas:
             # acessando a tela da sala (carrosel)
             url_carrosel = reverse('reservas:unidade', kwargs={"slug": sala.slug})
-            response = self.client.get(url_carrosel)
+            response = self.client_autenticado.get(url_carrosel)
 
             # Teste para verificar componente de selecionar data
             self.assertContains(response, 'id="componente_selecionar_data"',
@@ -141,11 +141,11 @@ class TelaCarroselUnidade(ReservasTest):
 
             # Teste para verificar se a imagem está exibida
             self.assertContains(response, 'id="imagem_sala"',
-                                msg_prefix="Componente de selecionar data não está sendo exibida")
+                                msg_prefix="Componente de selecionar sala não está sendo exibida")
 
             # Teste para verificar se a tabela de hoŕarios está sendo exibida
             self.assertContains(response, 'id="lista_horarios"',
-                                msg_prefix="Componente de selecionar data não está sendo exibida")
+                                msg_prefix="Componente de lista horários não está sendo exibida")
 
     def test_imagem_nome_sala_correspondente(self):
         # consulta todas unidades ativas
@@ -167,6 +167,7 @@ class TelaCarroselUnidade(ReservasTest):
             # testando se o nome da sala está sendo exibido na tela
             self.assertContains(response, f'<span>{sala.nome}</span>')
 
+            # todo Verificar o motivo do self.client.get(url_arquivo) sempre retornar 404
             # teste pra verificar se o arquivo está carregando (sendo exibida)
             response = requests.get("http://127.0.0.1:8000" + url_imagem)
             self.assertEqual(response.status_code, 200)
@@ -174,12 +175,28 @@ class TelaCarroselUnidade(ReservasTest):
             # verificar o content-type do response
             self.assertTrue(response.headers['Content-Type'].startswith('image/'))
 
-    def test_sala_sem_reservas(self):
+    def test_sala_sem_reservas_no_dia(self):
+        # get no dia atual
         dia_hoje = datetime.date.today()
+
+        # consideramos o horário inicial do dia (5 da manhã)
         horario_inicial = datetime.datetime(dia_hoje.year, dia_hoje.month, dia_hoje.day, 5, 0, 0)
-        sala = Sala.objects.filter(ativo=True)
-        sala.reserva_set.all()
 
-        # todo Verificar o motivo do self.client.get(url_arquivo) sempre retornar 404
+        # get a primeira sala disponível
+        sala = Sala.objects.filter(ativo=True).first()
 
-        # todo Verificar solução do teste test_sala_sem_reservas em questão da sensibilidade do horário
+        # pega a configuração da sala
+        config = sala.config
+        horario_abertura = config.horario_abertura
+        horario_encerramento = config.horario_encerramento
+
+        # consulta todos status dos horarios da sala
+        lista_status = sala.get_status_horarios(dia_hoje, horario_inicial)
+
+        # Deve retornar só um status (data de abertura ate as data de encerramento e status disponível)
+        self.assertEqual(len(lista_status), 1)
+
+        # o teste precisa garantir que a sala está 100% disponível desde a abertura até o encerramento no dia
+        self.assertEqual(lista_status[0].inicio, horario_abertura)
+        self.assertEqual(lista_status[0].termino, horario_encerramento)
+        self.assertEqual(lista_status[0].status, 'disponível')

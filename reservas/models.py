@@ -11,6 +11,7 @@ class Unidade(models.Model):
     nome = models.CharField("Nome", max_length=50)
     slug = models.SlugField(max_length=50, unique=True, null=True)
     ativo = models.BooleanField(default=True)
+    todas_salas: models.Manager
 
     def get_absolute_url(self):
         return reverse("reservas:unidade", kwargs={"slug": self.slug})
@@ -27,7 +28,7 @@ class Sala(models.Model):
     config = models.ForeignKey(
         "reservas.ConfigAgendaSala", on_delete=models.SET(get_config_padrao),
     )
-    unidade = models.ForeignKey("reservas.Unidade", on_delete=models.PROTECT)
+    unidade = models.ForeignKey("reservas.Unidade", on_delete=models.PROTECT, related_name='todas_salas')
 
     def __str__(self):
         return self.nome
@@ -37,13 +38,15 @@ class Reserva(models.Model):
     horario_inicio = models.DateTimeField("Horário Início")
     horario_termino = models.DateTimeField("Horário Término")
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    sala = models.ForeignKey(Sala, on_delete=models.PROTECT)
+    sala = models.ForeignKey(Sala, on_delete=models.PROTECT, related_name='todas_salas')
+    todas_salas: models.Manager[Sala]
 
     def __str__(self):
         reservada = (
             f"Reservada - {self.user.get_full_name()}" if self.user else "Disponível"
         )
-        return f"{self.sala.nome} - {self.horario_inicio.strftime('%d/%m/%Y %H:%M')} - {self.horario_termino.strftime('%d/%m/%Y %H:%M')} - {reservada}"
+        return f"{self.sala.nome} - {self.horario_inicio.strftime('%d/%m/%Y %H:%M')}" \
+               f" - {self.horario_termino.strftime('%d/%m/%Y %H:%M')} - {reservada}"
 
 
 class ConfigAgendaSala(models.Model):
