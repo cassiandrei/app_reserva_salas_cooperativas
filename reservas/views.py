@@ -24,9 +24,18 @@ class UnidadesListView(ListView, LoginRequiredMixin):
 
 @login_required
 def unidade(request, slug):
+    # pega a Unidade
     unidade = get_object_or_404(Unidade, slug=slug)
-    sala = unidade.todas_salas.first()
+
+    # seleciona a sala atraves do argumento sala ou pega a primeira
+    sala_selecionada = request.GET.get('sala', None)
+    if sala_selecionada:
+        sala = get_object_or_404(Sala, unidade=unidade, slug=sala_selecionada)
+    else:
+        sala = unidade.get_salas_ativas().first()
+
     context = {
-        'sala': sala,
+        "unidade": unidade,
+        "sala": sala,
     }
     return render(request, 'reservas/unidade/index.html', context=context)

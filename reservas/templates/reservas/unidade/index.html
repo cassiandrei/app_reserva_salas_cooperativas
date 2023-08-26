@@ -1,4 +1,8 @@
 {% extends 'core/base.html' %}
+{% load static %}
+{% block extra_css %}
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+{% endblock %}
 
 {% block title %}{{ unidade }}{% endblock %}
 
@@ -9,7 +13,8 @@
     {# Selecionar data #}
     <div class="col-4">
       <div class="input-group">
-        <button type="button" class="btn btn-outline-secondary" id="componente_selecionar_data"><i class="bi bi-calendar"></i> Selecione
+        <button type="button" class="btn btn-outline-secondary" id="componente_selecionar_data"><i
+                class="bi bi-calendar"></i> Selecione
           uma data
         </button>
       </div>
@@ -17,7 +22,7 @@
 
     {# Selecionar a sala #}
     <div class="col-4">
-      <p>{{ sala }}</p>
+      <span>{{ sala }}</span>
     </div>
 
     {# Botão link para visualizar a sala na semana #}
@@ -27,27 +32,44 @@
   </div>
 
   <div class="row">
-
     <img id="imagem_sala" src="{{ sala.imagem.url }}" class="d-block w-100" alt="...">
+  </div>
 
+  <div class="row">
+    <ul id="lista_horarios" class="list-group">
+      <li class="list-group-item">An item</li>
+      <li class="list-group-item">A second item</li>
+      <li class="list-group-item">A third item</li>
+      <li class="list-group-item">A fourth item</li>
+      <li class="list-group-item">And a fifth one</li>
+    </ul>
   </div>
 
 
 {% endblock %}
 
 {% block extra_js %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
   <script>
-      $(document).ready(function () {
-          $('#componente_selecionar_data').datepicker({
-              format: 'yyyy-mm-dd',
-              todayHighlight: true,
-              autoclose: true
-          }).on('changeDate', function (e) {
-              // Atualizar o texto do botão com a data selecionada
-              var selectedDate = e.format('dd/mm');
-              $(this).html('<i class=" bi bi-calendar"></i> ' + selectedDate);
-          });
+      var picker = new Pikaday({
+          field: document.getElementById('componente_selecionar_data'),
+          toString(date, format) {
+              // you should do formatting based on the passed format,
+              // but we will just return 'D/M/YYYY' for simplicity
+              return date.toLocaleDateString(undefined, {month: 'long', day: 'numeric'})
+          },
+          parse(dateString, format) {
+              // dateString is the result of `toString` method
+              const parts = dateString.split('/');
+              const day = parseInt(parts[0], 10);
+              const month = parseInt(parts[1], 10) - 1;
+              const year = parseInt(parts[2], 10);
+              return new Date(year, month, day);
+          },
+          onSelect: function (date) {
+              var data_formatada = picker.toString();
+              $('#componente_selecionar_data').html('<i class=" bi bi-calendar"></i> ' + data_formatada);
+          }
       });
   </script>
 {% endblock %}

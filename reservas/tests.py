@@ -128,12 +128,12 @@ class TelaCarroselUnidade(ReservasTest):
 
     def test_componentes_basicos_carrosel(self):
         # consulta todas unidades ativas
-        salas = Sala.objects.filter(ativo=True)
+        unidades = Unidade.objects.filter(ativo=True)
 
-        for sala in salas:
+        for unidade in unidades:
             # acessando a tela da sala (carrosel)
-            url_carrosel = reverse('reservas:unidade', kwargs={"slug": sala.slug})
-            response = self.client_autenticado.get(url_carrosel)
+            url_unidade = reverse('reservas:unidade', kwargs={"slug": unidade.slug})
+            response = self.client_autenticado.get(url_unidade)
 
             # Teste para verificar componente de selecionar data
             self.assertContains(response, 'id="componente_selecionar_data"',
@@ -149,38 +149,42 @@ class TelaCarroselUnidade(ReservasTest):
 
     def test_imagem_nome_sala_correspondente(self):
         # consulta todas unidades ativas
-        salas = Sala.objects.filter(ativo=True)
+        unidades = Unidade.objects.filter(ativo=True)
 
-        for sala in salas:
+        for unidade in unidades:
             # acessando a tela da sala (carrosel)
-            url_carrosel = reverse('reservas:unidade', kwargs={"slug": sala.slug})
+            url_unidade = reverse('reservas:unidade', kwargs={"slug": unidade.slug})
 
-            # teste para verificar o nome do arquivo correspondente a sala
-            nome_arquivo_image_sala = os.path.basename(sala.imagem.name)
-            self.assertEqual(str(sala.pk), nome_arquivo_image_sala.split('.')[0])
+            for sala in unidade.todas_salas.filter(ativo=True):
+                
+                url_sala = url_unidade + f'?sala={sala.slug}'
 
-            # testando se o caminho da imagem está sendo exibida na tela
-            url_imagem = sala.imagem.url
-            response = self.client_autenticado.get(url_carrosel)
-            self.assertContains(response, f'src="{url_imagem}"')
+                # teste para verificar o nome do arquivo correspondente a sala
+                nome_arquivo_image_sala = os.path.basename(sala.imagem.name)
+                self.assertEqual(str(sala.slug), nome_arquivo_image_sala.split('.')[0])
 
-            # testando se o nome da sala está sendo exibido na tela
-            self.assertContains(response, f'<span>{sala.nome}</span>')
+                # testando se o caminho da imagem está sendo exibida na tela
+                url_imagem = sala.imagem.url
+                response = self.client_autenticado.get(url_sala)
+                self.assertContains(response, f'src="{url_imagem}"')
 
-            # todo Verificar o motivo do self.client.get(url_arquivo) sempre retornar 404
-            # teste pra verificar se o arquivo está carregando (sendo exibida)
-            response = requests.get("http://127.0.0.1:8000" + url_imagem)
-            self.assertEqual(response.status_code, 200)
+                # testando se o nome da sala está sendo exibido na tela
+                self.assertContains(response, f'<span>{sala.nome}</span>')
 
-            # verificar o content-type do response
-            self.assertTrue(response.headers['Content-Type'].startswith('image/'))
+                # todo Verificar o motivo do self.client.get(url_arquivo) sempre retornar 404
+                # teste pra verificar se o arquivo está carregando (sendo exibida)
+                response = requests.get("http://127.0.0.1:8000" + url_imagem)
+                self.assertEqual(response.status_code, 200)
+
+                # verificar o content-type do response
+                self.assertTrue(response.headers['Content-Type'].startswith('image/'))
 
     def test_sala_sem_reservas_no_dia(self):
         # get no dia atual
         dia_hoje = datetime.date.today()
 
         # consideramos o horário inicial do dia (5 da manhã)
-        horario_inicial = datetime.datetime(dia_hoje.year, dia_hoje.month, dia_hoje.day, 5, 0, 0)
+        data_horario_inicial = datetime.datetime(dia_hoje.year, dia_hoje.month, dia_hoje.day, 5, 0, 0)
 
         # get a primeira sala disponível
         sala = Sala.objects.filter(ativo=True).first()
@@ -191,7 +195,7 @@ class TelaCarroselUnidade(ReservasTest):
         horario_encerramento = config.horario_encerramento
 
         # consulta todos status dos horarios da sala
-        lista_status = sala.get_status_horarios(dia_hoje, horario_inicial)
+        lista_status = sala.get_status_horarios(data_horario_inicial)
 
         # Deve retornar só um status (data de abertura ate as data de encerramento e status disponível)
         self.assertEqual(len(lista_status), 1)

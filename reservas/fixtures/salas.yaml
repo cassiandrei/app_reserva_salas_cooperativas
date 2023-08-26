@@ -2,7 +2,7 @@
   pk: 1
   fields:
     nome: Ética
-    imagem: salas/1.jpg
+    imagem: unidades/complexo/salas/etica.jpg
     ativo: true
     config: 1
     unidade: 2
@@ -11,7 +11,7 @@
   pk: 2
   fields:
     nome: Segurança
-    imagem: salas/2.jpg
+    imagem: unidades/complexo/salas/seguranca.jpg
     ativo: true
     config: 1
     unidade: 2
@@ -20,8 +20,8 @@
   pk: 3
   fields:
     nome: Sala Térreo
-    imagem: salas/3.jpg
+    imagem: unidades/camobi/salas/terreo.jpg
     ativo: true
     config: 1
     unidade: 1
-    slug: sala_terreo
+    slug: terreo
