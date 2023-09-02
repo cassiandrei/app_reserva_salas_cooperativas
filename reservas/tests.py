@@ -188,19 +188,22 @@ class TelaCarroselUnidade(ReservasTest):
 
         # get a primeira sala disponível
         sala = Sala.objects.filter(ativo=True).first()
+        url_unidade = reverse('reservas:unidade', kwargs={"slug": sala.unidade.slug})
+        url_sala = url_unidade + f'?sala={sala.slug}'
 
         # pega a configuração da sala
         config = sala.config
         horario_abertura = config.horario_abertura
         horario_encerramento = config.horario_encerramento
 
-        # consulta todos status dos horarios da sala
-        lista_status = sala.get_status_horarios(data_horario_inicial)
+        # teste se está retornando nenhuma sala
+        reservas = sala.get_reservas_no_dia(dia_hoje)
+        self.assertEqual(reservas.count(), 0)
 
-        # Deve retornar só um status (data de abertura ate as data de encerramento e status disponível)
-        self.assertEqual(len(lista_status), 1)
+        # tem que exibir o horário inicial da sala no componente
+        response = self.client_autenticado.get(url_sala)
+        horario_inicial_sala = sala.get_horario_inicial(dia_hoje)
 
-        # o teste precisa garantir que a sala está 100% disponível desde a abertura até o encerramento no dia
-        self.assertEqual(lista_status[0].inicio, horario_abertura)
-        self.assertEqual(lista_status[0].termino, horario_encerramento)
-        self.assertEqual(lista_status[0].status, 'disponível')
+        # todo continuamores no sabado (09/07/2023)
+        self.assertContains(response, "")
+

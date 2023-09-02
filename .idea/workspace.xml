@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9f7e94f8-2fe2-4f33-85f1-65cc5a34e5a0" name="Changes" comment="Implementando testes unitarios para tela de unidades + tela HTML">
-      <change beforePath="$PROJECT_DIR$/core/templates/core/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/core/templates/core/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reservas/fixtures/salas.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/fixtures/salas.yaml" afterDir="false" />
+    <list default="true" id="9f7e94f8-2fe2-4f33-85f1-65cc5a34e5a0" name="Changes" comment="Adicinando datepicker customizado e validando testes">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_08_2023_19_45_[Changes]1/2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_08_2023_19_45_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_08_2023_19_45__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reservas/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reservas/templates/reservas/unidade/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/templates/reservas/unidade/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reservas/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/tests.py" afterDir="false" />
@@ -60,21 +64,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/cassiano/PycharmProjects/app_reserva_salas_cooperativas/core&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/cassiano/PycharmProjects/app_reserva_salas_cooperativas/core",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.stylelint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.stylelint": "",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlite"
+    ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/core" />
@@ -295,7 +305,8 @@
       <workItem from="1692450168364" duration="9548000" />
       <workItem from="1692639749865" duration="599000" />
       <workItem from="1693055429612" duration="1014000" />
-      <workItem from="1693056774755" duration="5316000" />
+      <workItem from="1693056774755" duration="8670000" />
+      <workItem from="1693660063456" duration="6236000" />
     </task>
     <task id="LOCAL-00001" summary="modulo core">
       <created>1685574389362</created>
@@ -374,7 +385,14 @@
       <option name="project" value="LOCAL" />
       <updated>1692571492585</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Adicinando datepicker customizado e validando testes">
+      <created>1693062168159</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1693062168159</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -398,14 +416,15 @@
     <MESSAGE value="Login concluído + base.html com header e footer" />
     <MESSAGE value="Implementando testes unitarios para tela de unidades" />
     <MESSAGE value="Implementando testes unitarios para tela de unidades + tela HTML" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implementando testes unitarios para tela de unidades + tela HTML" />
+    <MESSAGE value="Adicinando datepicker customizado e validando testes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adicinando datepicker customizado e validando testes" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_teste_usuario_logado.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.teste_usuario_logado Coverage Results" MODIFIED="1692450189657" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__user_tests_LoginTest.coverage" NAME="Test: user.tests.LoginTest Coverage Results" MODIFIED="1691244123724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_ReservasTest.coverage" NAME="Test: reservas.tests.ReservasTest Coverage Results" MODIFIED="1690039277382" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__user_tests_LoginTest_test_login_view.coverage" NAME="Test: user.tests.LoginTest.test_login_view Coverage Results" MODIFIED="1690977263352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$testes.coverage" NAME="testes Coverage Results" MODIFIED="1693062070079" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$testes.coverage" NAME="testes Coverage Results" MODIFIED="1693666191420" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_test_componentes_basicos_carrosel.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.test_componentes_basicos_carrosel Coverage Results" MODIFIED="1691847124930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_test_imagem_nome_sala_correspondente.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.test_imagem_nome_sala_correspondente Coverage Results" MODIFIED="1692451905668" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade Coverage Results" MODIFIED="1691846928707" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />

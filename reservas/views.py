@@ -16,7 +16,7 @@ def unidades(request):
 
 
 # UNIDADES CLASS VIEW
-class UnidadesListView(ListView, LoginRequiredMixin):
+class UnidadesListView(LoginRequiredMixin, ListView):
     queryset = Unidade.objects.filter(ativo=True)
     template_name = 'reservas/unidades/index.html'
     context_object_name = "unidades"

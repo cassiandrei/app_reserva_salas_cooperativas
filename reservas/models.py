@@ -51,30 +51,31 @@ class Sala(models.Model):
     def get_config_horario_encerramento(self):
         return self.config.horario_encerramento
 
-    def get_status_horarios(self, data_horario_inicial: datetime.datetime):
-        class Status():
-            inicio: datetime.datetime
-            termino: datetime.datetime
-            status: str
+    def get_reservas_no_dia(self, data: datetime.date):
+        # retorna todas as reservas da sala no dia do parametro
+        reservas = self.todas_reservas.filter(horario_inicio__date=data)
+        return reservas
 
-            def __init__(self, inicio, termino, status):
-                self.inicio = inicio
-                self.termino = termino
-                self.status = status
+    def get_horario_inicial(self, data: datetime.date):
+        reservas = self.get_reservas_no_dia(data)
+        if reservas.exists():
+            reservas_anteriores = reservas.filter(horario_inicio__time__lte=self.config.horario_abertura)
+            if reservas_anteriores.exists():
+                return reservas_anteriores.first().horario_inicio
 
-        lista_horarios_status = []
-        reservas = self.todas_reservas.filter(horario_inicio__date=data_horario_inicial.date(),
-                                              horario_inicio__gte=data_horario_inicial)
+        return self.config.horario_abertura
 
-        cenario_inicial = Status(self.get_config_horario_abertura(), self.get_config_horario_encerramento(), 'disponível')
-        return [cenario_inicial]
 
 
 class Reserva(models.Model):
+    titulo = models.CharField("Título", max_length=50)
     horario_inicio = models.DateTimeField("Horário Início")
     horario_termino = models.DateTimeField("Horário Término")
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     sala = models.ForeignKey(Sala, on_delete=models.PROTECT, related_name='todas_reservas')
+
+    class Meta:
+        ordering = ["sala", "horario_inicio"]
 
     def __str__(self):
         reservada = (
