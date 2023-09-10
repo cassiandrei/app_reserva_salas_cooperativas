@@ -1,0 +1,8 @@
+- model: reservas.reserva
+  pk: 1
+  fields:
+    titulo: Definição layout nova proposta
+    horario_inicio: '2023-09-27 08:00:00'
+    horario_termino: '2023-09-27 10:30:00'
+    user: 1
+    sala: 1

@@ -65,6 +65,8 @@ class Sala(models.Model):
 
         return self.config.horario_abertura
 
+    def get_absolute_url(self):
+        return reverse('reservas:unidade', kwargs={"slug": self.unidade.slug}) + f"?sala={self.slug}"
 
 
 class Reserva(models.Model):
