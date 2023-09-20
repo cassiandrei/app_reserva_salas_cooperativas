@@ -37,9 +37,12 @@ class Sala(models.Model):
     imagem = models.ImageField("Imagem", upload_to=get_path_sala_imagem)
     ativo = models.BooleanField("Ativo", default=True)
     config = models.ForeignKey(
-        "reservas.ConfigAgendaSala", on_delete=models.SET(get_config_padrao),
+        "reservas.ConfigAgendaSala",
+        on_delete=models.SET(get_config_padrao),
     )
-    unidade = models.ForeignKey("reservas.Unidade", on_delete=models.PROTECT, related_name='todas_salas')
+    unidade = models.ForeignKey(
+        "reservas.Unidade", on_delete=models.PROTECT, related_name="todas_salas"
+    )
     todas_reservas: models.Manager[Reserva]
 
     def __str__(self):
@@ -56,17 +59,32 @@ class Sala(models.Model):
         reservas = self.todas_reservas.filter(horario_inicio__date=data)
         return reservas
 
+    def get_reservas_na_semana(self, ano, semana):
+        primeiro_dia_do_ano = datetime.date(ano, 1, 1)
+        primeiro_dia_semana_1 = primeiro_dia_do_ano - datetime.timedelta(days=primeiro_dia_do_ano.weekday()+1)
+        data_inicio = primeiro_dia_semana_1 + datetime.timedelta(weeks=semana)
+        data_fim = data_inicio + datetime.timedelta(days=6)
+        reservas = self.todas_reservas.filter(
+            horario_inicio__date__gte=data_inicio, horario_inicio__date__lte=data_fim
+        )
+        return reservas
+
     def get_horario_inicial(self, data: datetime.date):
         reservas = self.get_reservas_no_dia(data)
         if reservas.exists():
-            reservas_anteriores = reservas.filter(horario_inicio__time__lte=self.config.horario_abertura)
+            reservas_anteriores = reservas.filter(
+                horario_inicio__time__lte=self.config.horario_abertura
+            )
             if reservas_anteriores.exists():
                 return reservas_anteriores.first().horario_inicio
 
         return self.config.horario_abertura
 
     def get_absolute_url(self):
-        return reverse('reservas:unidade', kwargs={"slug": self.unidade.slug}) + f"?sala={self.slug}"
+        return (
+            reverse("reservas:unidade", kwargs={"slug": self.unidade.slug})
+            + f"?sala={self.slug}"
+        )
 
 
 class Reserva(models.Model):
@@ -74,7 +92,9 @@ class Reserva(models.Model):
     horario_inicio = models.DateTimeField("Horário Início")
     horario_termino = models.DateTimeField("Horário Término")
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    sala = models.ForeignKey(Sala, on_delete=models.PROTECT, related_name='todas_reservas')
+    sala = models.ForeignKey(
+        Sala, on_delete=models.PROTECT, related_name="todas_reservas"
+    )
 
     class Meta:
         ordering = ["sala", "horario_inicio"]
@@ -83,8 +103,10 @@ class Reserva(models.Model):
         reservada = (
             f"Reservada - {self.user.get_full_name()}" if self.user else "Disponível"
         )
-        return f"{self.sala.nome} - {self.horario_inicio.strftime('%d/%m/%Y %H:%M')}" \
-               f" - {self.horario_termino.strftime('%d/%m/%Y %H:%M')} - {reservada}"
+        return (
+            f"{self.sala.nome} - {self.horario_inicio.strftime('%d/%m/%Y %H:%M')}"
+            f" - {self.horario_termino.strftime('%d/%m/%Y %H:%M')} - {reservada}"
+        )
 
 
 class ConfigAgendaSala(models.Model):

@@ -1,17 +1,25 @@
 import datetime
 import os
+from typing import List
+
 from django.test import TestCase
 from django.utils import timezone
 import requests
 from django.shortcuts import reverse
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-
-from reservas.models import Unidade, Sala
+from django.db.models import QuerySet
+from reservas.models import Unidade, Sala, Reserva
 
 
 class ReservasTest(TestCase):
-    fixtures = ["users.yaml", "configsalas.yaml", "unidades.yaml", "salas.yaml", "reservas.yaml"]
+    fixtures = [
+        "users.yaml",
+        "configsalas.yaml",
+        "unidades.yaml",
+        "salas.yaml",
+        "reservas.yaml",
+    ]
 
     def setUp(self) -> None:
         # get usuário pk=1 (cassiano)
@@ -25,6 +33,8 @@ class ReservasTest(TestCase):
         # consulta todas unidades ativas
         self.unidades = Unidade.objects.filter(ativo=True)
 
+        self.login_url = reverse("user:login")
+
 
 class TelaInicialUnidades(ReservasTest):
     """
@@ -36,9 +46,6 @@ class TelaInicialUnidades(ReservasTest):
         Tela de unidades deve exibir todas unidades cadastradas
         """
 
-        # get a URL de login
-        login_url = reverse("user:login")
-
         # rota raíz
         rota_inicial = "/"
 
@@ -46,7 +53,7 @@ class TelaInicialUnidades(ReservasTest):
         response = self.client.get(rota_inicial)
 
         # testando se o usuario não autenticado está sendo redirecionado
-        self.assertRedirects(response, f"{login_url}?next={rota_inicial}")
+        self.assertRedirects(response, f"{self.login_url}?next={rota_inicial}")
 
         # fazer um POST na tela de login
         response = self.client.post(
@@ -74,9 +81,6 @@ class TelaInicialUnidades(ReservasTest):
         self.user.set_password("teste1234")
         self.user.save()
 
-        # get a URL de login
-        login_url = reverse("user:login")
-
         # get a URL das unidades
         index_unidades_url = reverse("reservas:unidades")
 
@@ -84,7 +88,7 @@ class TelaInicialUnidades(ReservasTest):
         response = self.client.get(index_unidades_url)
 
         # testando se o usuario não autenticado está sendo redirecionado
-        self.assertRedirects(response, f"{login_url}?next={index_unidades_url}")
+        self.assertRedirects(response, f"{self.login_url}?next={index_unidades_url}")
 
         # fazer um POST na tela de login
         response = self.client.post(
@@ -116,9 +120,6 @@ class TelaCarroselUnidade(ReservasTest):
     """
 
     def test_usuario_logado(self):
-        # get a URL de login
-        login_url = reverse("user:login")
-
         sala = Sala.objects.first()
 
         # rota da sala
@@ -128,7 +129,7 @@ class TelaCarroselUnidade(ReservasTest):
         response = self.client.get(url_sala)
 
         # testando se o usuario não autenticado está sendo redirecionado para tela login
-        self.assertRedirects(response, f"{login_url}?next={url_sala}")
+        self.assertRedirects(response, f"{self.login_url}?next={url_sala}")
 
     def test_componentes_basicos_carrosel(self):
         for unidade in self.unidades:
@@ -218,7 +219,6 @@ class TelaCarroselUnidade(ReservasTest):
         """
 
         for unidade in self.unidades:
-
             # percorrer todas as salas
             for sala in unidade.todas_salas.filter(ativo=True):
                 # pega a configuração da sala
@@ -241,9 +241,9 @@ class TelaCarroselUnidade(ReservasTest):
                 )
 
     def test_timegrid_reserva(self):
-        '''
-            Testes para exibir uma reserva dentro do Timegrid
-        '''
+        """
+        Testes para exibir uma reserva dentro do Timegrid
+        """
         sala = Sala.objects.get(pk=1)
 
         # acessando o link da sala
@@ -261,20 +261,26 @@ class TelaCarroselUnidade(ReservasTest):
         if reservas.exists():
             for reserva in reservas:
                 # teste para verificar se está exibindo a reserva
-                self.assertContains(response, f"<span for='titulo_{reserva.pk}'>{reserva.titulo}</span>")
-                self.assertContains(response,
-                                    f"<span for='horario_inicio_{reserva.pk}'>{reserva.horario_inicio}</span>")
-                self.assertContains(response,
-                                    f"<span for='horario_termino_{reserva.pk}'>{reserva.horario_termino}</span>")
+                self.assertContains(
+                    response, f"<span for='titulo_{reserva.pk}'>{reserva.titulo}</span>"
+                )
+                self.assertContains(
+                    response,
+                    f"<span for='horario_inicio_{reserva.pk}'>{reserva.horario_inicio}</span>",
+                )
+                self.assertContains(
+                    response,
+                    f"<span for='horario_termino_{reserva.pk}'>{reserva.horario_termino}</span>",
+                )
 
         else:
             # teste para verificar se exibe nenhuma reserva
             self.fail("É necessário uma reserva registrada para continuar o teste")
 
-    def test_reserva_andamento(self):
-        '''
-            Teste para mostrar ao usuário que a reserva está em andamento
-        '''
+    def test_reservas_status(self):
+        """
+        Teste para mostrar ao usuário que a reserva está em andamento, encerrado, pendente e teste de horários;
+        """
         # define o horário de acesso
         horario_acesso = datetime.datetime(year=2023, month=9, day=27, hour=9, minute=0)
         # pega a saka
@@ -282,10 +288,9 @@ class TelaCarroselUnidade(ReservasTest):
         # acessando o link da sala
         url_sala = sala.get_absolute_url()
         # resgatar todos as reservas da sala nesse dia
-        reservas = sala.get_reservas_no_dia(horario_acesso.date())
+        reservas: QuerySet[Reserva] = sala.get_reservas_no_dia(horario_acesso.date())
 
         if reservas.exists():
-
             # Set the desired local date and time (in this example, 9:00 AM)
             desired_datetime = timezone.make_aware(horario_acesso)
 
@@ -301,7 +306,43 @@ class TelaCarroselUnidade(ReservasTest):
 
                 for reserva in reservas:
                     self.assertContains(response, 'class="reserva_andamento"')
+                    self.assertContains(response, 'class="reserva_encerrada"')
+                    self.assertContains(response, 'class="reserva_pendente"')
+
+                    self.assertContains(
+                        response,
+                        f'<span id="horario_inicio_{reserva.pk}">{reserva.horario_inicio}</span>',
+                    )
+                    self.assertContains(
+                        response,
+                        f'<span id="horario_termino_{reserva.pk}">{reserva.horario_termino}</span>',
+                    )
 
         else:
             # teste para verificar se exibe nenhuma reserva
             self.fail("É necessário uma reserva registrada para continuar o teste")
+
+    def test_reservas_calendario(self):
+        """
+        Teste para exibir se as reservas estão dentro do calendário;
+        """
+        data = datetime.date(2023, 9, 27)
+
+        # carregar o link do calendário da sala
+        sala = Sala.objects.get(pk=1)
+        url_calendario = reverse(
+            "reservas:calendario",
+            kwargs={
+                "sala": sala.slug,
+                "ano": data.year,
+                "semana": data.isocalendar()[1],
+            },
+        )
+
+        # testa se redirecionou usuário não atenticado para tela de login
+        response = self.client.get(url_calendario)
+        self.assertRedirects(response, f"{self.login_url}?next={url_calendario}")
+
+        response = self.client_autenticado.get(url_calendario)
+        for reserva in sala.get_reservas_na_semana(data.year, data.isocalendar()[1]):
+            self.assertContains(response, f'<span id="reserva_{reserva.pk}">')
