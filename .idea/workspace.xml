@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9f7e94f8-2fe2-4f33-85f1-65cc5a34e5a0" name="Changes" comment="Testes Timegrid">
-      <change afterPath="$PROJECT_DIR$/test_semana.py" afterDir="false" />
+    <list default="true" id="9f7e94f8-2fe2-4f33-85f1-65cc5a34e5a0" name="Changes" comment="Testes Calendário get_reservas_na_semana">
+      <change afterPath="$PROJECT_DIR$/reservas/serializers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/reservas/templates/reservas/unidade/calendario.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reservas/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reservas/fixtures/reservas.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/fixtures/reservas.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reservas/templates/reservas/unidade/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/templates/reservas/unidade/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reservas/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reservas/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reservas/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/reservas/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,8 +96,8 @@
       <recent name="$PROJECT_DIR$/reservas/fixtures" />
     </key>
   </component>
-  <component name="RunManager" selected="Django tests.testes">
-    <configuration name="Test: reservas.tests.TelaCarroselUnidade.test_componentes_basicos_carrosel" type="DjangoTestsConfigurationType" temporary="true">
+  <component name="RunManager" selected="Django tests.Test: reservas.tests.TelaCarroselUnidade">
+    <configuration name="Test: reservas.tests.TelaCarroselUnidade" type="DjangoTestsConfigurationType" temporary="true">
       <module name="app_reserva_salas_cooperativas" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -106,7 +110,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="reservas.tests.TelaCarroselUnidade.test_componentes_basicos_carrosel" />
+      <option name="TARGET" value="reservas.tests.TelaCarroselUnidade" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
@@ -173,7 +177,7 @@
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Test: reservas.tests.TelaCarroselUnidade.teste_usuario_logado" type="DjangoTestsConfigurationType" temporary="true">
+    <configuration name="Test: reservas.tests.TelaInicialUnidades" type="DjangoTestsConfigurationType" temporary="true">
       <module name="app_reserva_salas_cooperativas" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -186,7 +190,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="TARGET" value="reservas.tests.TelaCarroselUnidade.teste_usuario_logado" />
+      <option name="TARGET" value="reservas.tests.TelaInicialUnidades" />
       <option name="SETTINGS_FILE" value="" />
       <option name="CUSTOM_SETTINGS" value="false" />
       <option name="USE_OPTIONS" value="false" />
@@ -240,19 +244,19 @@
     <list>
       <item itemvalue="Django Server.app_reserva_salas_cooperativas" />
       <item itemvalue="Django tests.testes" />
+      <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade" />
+      <item itemvalue="Django tests.Test: reservas.tests.TelaInicialUnidades" />
       <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.test_timegrid_reserva" />
       <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.teste_sala_abertura_encerramento" />
-      <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.test_componentes_basicos_carrosel" />
       <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.test_imagem_nome_sala_correspondente" />
-      <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.teste_usuario_logado" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade" />
+        <item itemvalue="Django tests.Test: reservas.tests.TelaInicialUnidades" />
         <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.test_timegrid_reserva" />
         <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.teste_sala_abertura_encerramento" />
         <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.test_imagem_nome_sala_correspondente" />
-        <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.teste_usuario_logado" />
-        <item itemvalue="Django tests.Test: reservas.tests.TelaCarroselUnidade.test_componentes_basicos_carrosel" />
       </list>
     </recent_temporary>
   </component>
@@ -311,7 +315,9 @@
       <workItem from="1694266964043" duration="8603000" />
       <workItem from="1694427378089" duration="614000" />
       <workItem from="1694526919272" duration="599000" />
-      <workItem from="1695245156200" duration="6508000" />
+      <workItem from="1695245156200" duration="7402000" />
+      <workItem from="1695292690051" duration="1404000" />
+      <workItem from="1695474536314" duration="7225000" />
     </task>
     <task id="LOCAL-00001" summary="modulo core">
       <created>1685574389362</created>
@@ -418,7 +424,14 @@
       <option name="project" value="LOCAL" />
       <updated>1694383322754</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Testes Calendário get_reservas_na_semana">
+      <created>1695251765830</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1695251765830</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -445,18 +458,20 @@
     <MESSAGE value="Adicinando datepicker customizado e validando testes" />
     <MESSAGE value="Atualizando teste, lista de horários" />
     <MESSAGE value="Testes Timegrid" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testes Timegrid" />
+    <MESSAGE value="Testes Calendário get_reservas_na_semana" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testes Calendário get_reservas_na_semana" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_teste_usuario_logado.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.teste_usuario_logado Coverage Results" MODIFIED="1692450189657" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_test_timegrid_reserva.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.test_timegrid_reserva Coverage Results" MODIFIED="1694270327518" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__user_tests_LoginTest.coverage" NAME="Test: user.tests.LoginTest Coverage Results" MODIFIED="1691244123724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaInicialUnidades.coverage" NAME="Test: reservas.tests.TelaInicialUnidades Coverage Results" MODIFIED="1695479441714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_ReservasTest.coverage" NAME="Test: reservas.tests.ReservasTest Coverage Results" MODIFIED="1690039277382" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__user_tests_LoginTest_test_login_view.coverage" NAME="Test: user.tests.LoginTest.test_login_view Coverage Results" MODIFIED="1690977263352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$testes.coverage" NAME="testes Coverage Results" MODIFIED="1695245699888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$testes.coverage" NAME="testes Coverage Results" MODIFIED="1695479351156" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_teste_sala_abertura_encerramento.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.teste_sala_abertura_encerramento Coverage Results" MODIFIED="1694268695000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_test_componentes_basicos_carrosel.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.test_componentes_basicos_carrosel Coverage Results" MODIFIED="1691847124930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_test_imagem_nome_sala_correspondente.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.test_imagem_nome_sala_correspondente Coverage Results" MODIFIED="1692451905668" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade Coverage Results" MODIFIED="1691846928707" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade Coverage Results" MODIFIED="1695479453112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

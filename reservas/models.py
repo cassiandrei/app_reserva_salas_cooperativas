@@ -5,6 +5,7 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import reverse
+from django.utils.timezone import now
 
 
 def get_config_padrao():
@@ -107,6 +108,23 @@ class Reserva(models.Model):
             f"{self.sala.nome} - {self.horario_inicio.strftime('%d/%m/%Y %H:%M')}"
             f" - {self.horario_termino.strftime('%d/%m/%Y %H:%M')} - {reservada}"
         )
+
+    def get_reserva_class(self):
+        now = now()
+        if self.horario_termino < now:
+            return "reserva_encerrada"
+        elif self.horario_inicio <= now <= self.horario_termino:
+            return "reserva_andamento"
+        else:
+            return "reserva_reservada"
+
+    def serialize(self):
+        return {
+            "title": self.titulo,
+            "start": self.horario_inicio.strftime("%Y-%m-%dT%H:%M:%S"),
+            "end": self.horario_termino.strftime("%Y-%m-%dT%H:%M:%S"),
+            "class": self.get_reserva_class()
+        }
 
 
 class ConfigAgendaSala(models.Model):

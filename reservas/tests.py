@@ -10,6 +10,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
 from reservas.models import Unidade, Sala, Reserva
+from django.db.models import Min, Max
 
 
 class ReservasTest(TestCase):
@@ -154,7 +155,7 @@ class TelaCarroselUnidade(ReservasTest):
             # Teste para verificar se a tabela de hoŕarios está sendo exibida
             self.assertContains(
                 response,
-                'id="lista_horarios"',
+                'id="timegrid"',
                 msg_prefix="Componente de lista horários não está sendo exibida",
             )
 
@@ -322,6 +323,12 @@ class TelaCarroselUnidade(ReservasTest):
             # teste para verificar se exibe nenhuma reserva
             self.fail("É necessário uma reserva registrada para continuar o teste")
 
+
+class CalendarioSala(ReservasTest):
+    '''
+        teste do Calendário da sala
+    '''
+
     def test_reservas_calendario(self):
         """
         Teste para exibir se as reservas estão dentro do calendário;
@@ -333,7 +340,7 @@ class TelaCarroselUnidade(ReservasTest):
         url_calendario = reverse(
             "reservas:calendario",
             kwargs={
-                "sala": sala.slug,
+                "sala_slug": sala.slug,
                 "ano": data.year,
                 "semana": data.isocalendar()[1],
             },
@@ -343,6 +350,39 @@ class TelaCarroselUnidade(ReservasTest):
         response = self.client.get(url_calendario)
         self.assertRedirects(response, f"{self.login_url}?next={url_calendario}")
 
+        # testa se as reservas da semana estão aparecendo no calendário
         response = self.client_autenticado.get(url_calendario)
         for reserva in sala.get_reservas_na_semana(data.year, data.isocalendar()[1]):
             self.assertContains(response, f'<span id="reserva_{reserva.pk}">')
+
+    def test_horario_abertura_encerramento_calendario(self):
+        for sala in Sala.objects.filter(ativo=True):
+            # horario de abertura e encerramento
+            config = sala.config
+            horario_abertura = config.horario_abertura
+            horario_encerramento = config.horario_encerramento
+
+            data = datetime.date(2023, 9, 27)
+
+            # horario de inicio da primeira reserva
+            reservas = sala.get_reservas_na_semana(data.year, data.isocalendar()[1])
+
+            # menor horário reservado
+            reservas_aggregate = reservas.aggregate(
+                valor_min=Min("horario_inicio__time"), valor_max=Max("horario_termino__time")
+            )
+
+            menor_horario: datetime.time = min(horario_abertura, reservas_aggregate["valor_min"])
+            maior_horario: datetime.time = max(horario_encerramento, reservas_aggregate["valor_max"])
+
+            url_calendario = reverse(
+                "reservas:calendario",
+                kwargs={
+                    "sala_slug": sala.slug,
+                    "ano": data.year,
+                    "semana": data.isocalendar()[1],
+                },
+            )
+            response = self.client_autenticado.get(url_calendario)
+            self.assertContains(response, f'<span id="calendario_top_time">{menor_horario.strftime("%H:%M")}')
+            self.assertContains(response, f'<span id="calendario_bottom_time">{maior_horario.strftime("%H:%M")}')
