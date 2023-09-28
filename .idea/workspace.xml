@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9f7e94f8-2fe2-4f33-85f1-65cc5a34e5a0" name="Changes" comment="Validando testes">
+    <list default="true" id="9f7e94f8-2fe2-4f33-85f1-65cc5a34e5a0" name="Changes" comment="feat: Termos de uso">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -311,6 +311,7 @@
       <workItem from="1695245156200" duration="7402000" />
       <workItem from="1695292690051" duration="1404000" />
       <workItem from="1695474536314" duration="7976000" />
+      <workItem from="1695846975948" duration="1474000" />
     </task>
     <task id="LOCAL-00001" summary="modulo core">
       <created>1685574389362</created>
@@ -431,7 +432,14 @@
       <option name="project" value="LOCAL" />
       <updated>1695481929114</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="feat: Termos de uso">
+      <created>1695847241011</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1695847241011</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -460,7 +468,8 @@
     <MESSAGE value="Testes Timegrid" />
     <MESSAGE value="Testes Calendário get_reservas_na_semana" />
     <MESSAGE value="Validando testes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Validando testes" />
+    <MESSAGE value="feat: Termos de uso" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Termos de uso" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/app_reserva_salas_cooperativas$Test__reservas_tests_TelaCarroselUnidade_teste_usuario_logado.coverage" NAME="Test: reservas.tests.TelaCarroselUnidade.teste_usuario_logado Coverage Results" MODIFIED="1692450189657" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
