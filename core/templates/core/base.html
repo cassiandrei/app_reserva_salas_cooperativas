@@ -15,6 +15,14 @@
 
   <!-- CSS adicional para fixar o footer e personalizar botões -->
   <style>
+      *{
+          --altura_footer: 75px;
+      }
+
+      body{
+          padding-bottom: calc(var(--altura_footer) + 10px);
+      }
+
       .footer {
           position: fixed;
           left: 0;
@@ -22,6 +30,8 @@
           width: 100%;
           background-color: #f5f5f5;
           color: black;
+          height: var(--altura_footer);
+          z-index: 2;
       }
 
       .btn-transparent {

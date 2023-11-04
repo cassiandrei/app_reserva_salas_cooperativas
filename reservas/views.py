@@ -2,6 +2,9 @@ import datetime
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from core.utils import get_time_astimezone
 from reservas.models import Unidade, Sala
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -25,6 +28,7 @@ class UnidadesListView(LoginRequiredMixin, ListView):
     context_object_name = "unidades"
 
 
+
 @login_required
 def unidade(request, slug):
     # pega a Unidade
@@ -33,21 +37,22 @@ def unidade(request, slug):
     # seleciona a sala atraves do argumento sala ou pega a primeira
     sala_selecionada = request.GET.get('sala', None)
     if sala_selecionada:
-        sala = get_object_or_404(Sala, unidade=unidade, slug=sala_selecionada)
+        sala: Sala = get_object_or_404(Sala, unidade=unidade, slug=sala_selecionada)
     else:
-        sala = unidade.get_salas_ativas().first()
+        sala: Sala = unidade.get_salas_ativas().first()
 
     # data selecionada do datepicker
+    # todo implementar get do datepicker
     data_selecionada = now().date()
 
     reservas = sala.get_reservas_no_dia(data_selecionada)
-
-
 
     context = {
         "unidade": unidade,
         "sala": sala,
         "data_selecionada": data_selecionada,
+        "slotMinTime":  sala.get_horario_inicial(data_selecionada).strftime('%H:%M:%S'),
+        "slotMaxTime":  sala.get_horario_termino(data_selecionada).strftime('%H:%M:%S')
     }
     return render(request, 'reservas/unidade/index.html', context=context)
 

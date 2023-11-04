@@ -210,7 +210,7 @@ class TelaCarroselUnidade(ReservasTest):
         response = self.client_autenticado.get(url_sala)
         horario_inicial_sala = sala.get_horario_inicial(dia_hoje)
 
-        # todo continuamores no sabado (09/07/2023)
+        # todo aplicar horario_inicial_sala
         self.assertContains(response, "")
 
     def teste_sala_abertura_encerramento(self):
@@ -325,9 +325,9 @@ class TelaCarroselUnidade(ReservasTest):
 
 
 class CalendarioSala(ReservasTest):
-    '''
-        teste do Calendário da sala
-    '''
+    """
+    teste do Calendário da sala
+    """
 
     def test_reservas_calendario(self):
         """
@@ -369,11 +369,16 @@ class CalendarioSala(ReservasTest):
 
             # menor horário reservado
             reservas_aggregate = reservas.aggregate(
-                valor_min=Min("horario_inicio__time"), valor_max=Max("horario_termino__time")
+                valor_min=Min("horario_inicio__time"),
+                valor_max=Max("horario_termino__time"),
             )
 
-            menor_horario: datetime.time = min(horario_abertura, reservas_aggregate["valor_min"])
-            maior_horario: datetime.time = max(horario_encerramento, reservas_aggregate["valor_max"])
+            menor_horario: datetime.time = min(
+                horario_abertura, reservas_aggregate["valor_min"]
+            )
+            maior_horario: datetime.time = max(
+                horario_encerramento, reservas_aggregate["valor_max"]
+            )
 
             url_calendario = reverse(
                 "reservas:calendario",
@@ -384,5 +389,13 @@ class CalendarioSala(ReservasTest):
                 },
             )
             response = self.client_autenticado.get(url_calendario)
-            self.assertContains(response, f'<span id="calendario_top_time">{menor_horario.strftime("%H:%M")}')
-            self.assertContains(response, f'<span id="calendario_bottom_time">{maior_horario.strftime("%H:%M")}')
+            self.assertContains(
+                response,
+                f'slotMinTime: "{menor_horario.strftime("%H:%M:%S")}"',
+                html=True,
+            )
+            self.assertContains(
+                response,
+                f'slotMaxTime: "{maior_horario.strftime("%H:%M:%S")}"',
+                html=True,
+            )

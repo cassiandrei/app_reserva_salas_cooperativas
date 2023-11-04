@@ -5,7 +5,10 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import reverse
+from django.utils import timezone
 from django.utils.timezone import now
+
+from core.utils import get_time_astimezone
 
 
 def get_config_padrao():
@@ -55,14 +58,16 @@ class Sala(models.Model):
     def get_config_horario_encerramento(self):
         return self.config.horario_encerramento
 
-    def get_reservas_no_dia(self, data: datetime.date):
+    def get_reservas_no_dia(self, data: datetime.date) -> models.QuerySet[Reserva]:
         # retorna todas as reservas da sala no dia do parametro
         reservas = self.todas_reservas.filter(horario_inicio__date=data)
         return reservas
 
     def get_reservas_na_semana(self, ano, semana):
         primeiro_dia_do_ano = datetime.date(ano, 1, 1)
-        primeiro_dia_semana_1 = primeiro_dia_do_ano - datetime.timedelta(days=primeiro_dia_do_ano.weekday()+1)
+        primeiro_dia_semana_1 = primeiro_dia_do_ano - datetime.timedelta(
+            days=primeiro_dia_do_ano.weekday() + 1
+        )
         data_inicio = primeiro_dia_semana_1 + datetime.timedelta(weeks=semana)
         data_fim = data_inicio + datetime.timedelta(days=6)
         reservas = self.todas_reservas.filter(
@@ -70,21 +75,26 @@ class Sala(models.Model):
         )
         return reservas
 
-    def get_horario_inicial(self, data: datetime.date):
+    def get_horario_inicial(self, data: datetime.date) -> datetime.time:
         reservas = self.get_reservas_no_dia(data)
-        if reservas.exists():
-            reservas_anteriores = reservas.filter(
+        if reservas_anteriores := reservas.filter(
                 horario_inicio__time__lte=self.config.horario_abertura
-            )
-            if reservas_anteriores.exists():
-                return reservas_anteriores.first().horario_inicio
-
+        ):
+            return reservas_anteriores.first().horario_inicio.astimezone().time()
         return self.config.horario_abertura
+
+    def get_horario_termino(self, data: datetime.date) -> datetime.time:
+        reservas = self.get_reservas_no_dia(data)
+        if reservas_superiores := reservas.filter(
+                horario_termino__time__gte=self.config.horario_encerramento
+        ):
+            return reservas_superiores.last().horario_termino.astimezone().time()
+        return self.config.horario_encerramento
 
     def get_absolute_url(self):
         return (
-            reverse("reservas:unidade", kwargs={"slug": self.unidade.slug})
-            + f"?sala={self.slug}"
+                reverse("reservas:unidade", kwargs={"slug": self.unidade.slug})
+                + f"?sala={self.slug}"
         )
 
 
@@ -105,8 +115,8 @@ class Reserva(models.Model):
             f"Reservada - {self.user.get_full_name()}" if self.user else "Disponível"
         )
         return (
-            f"{self.sala.nome} - {self.horario_inicio.strftime('%d/%m/%Y %H:%M')}"
-            f" - {self.horario_termino.strftime('%d/%m/%Y %H:%M')} - {reservada}"
+            f"{self.sala.nome} - {timezone.localtime(self.horario_inicio).strftime('%d/%m/%Y %H:%M')}"
+            f" - {timezone.localtime(self.horario_termino).strftime('%d/%m/%Y %H:%M')} - {reservada}"
         )
 
     def get_reserva_class(self):
@@ -123,7 +133,7 @@ class Reserva(models.Model):
             "title": self.titulo,
             "start": self.horario_inicio.strftime("%Y-%m-%dT%H:%M:%S"),
             "end": self.horario_termino.strftime("%Y-%m-%dT%H:%M:%S"),
-            "class": self.get_reserva_class()
+            "class": self.get_reserva_class(),
         }
 
 
