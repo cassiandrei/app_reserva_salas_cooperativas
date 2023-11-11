@@ -8,10 +8,16 @@
 
 {% block content %}
 
-  <div class="row mb-3 mt-2">
+  <div class="row mb-3 mt-2 justify-content-between">
+
+    {# Selecionar a sala #}
+    <div class="col-12 d-md-none gap-4 d-flex align-items-center justify-content-center">
+      {% include 'reservas/sala/select_sala.html' %}
+    </div>
+
 
     {# Selecionar data #}
-    <div class="col-1">
+    <div class="col-4 d-flex align-items-center">
       <div class="input-group">
         <button type="button" class="btn btn-sm btn-outline-secondary" id="componente_selecionar_data"><i
                 class="bi bi-calendar"></i> Selecione uma data
@@ -19,17 +25,14 @@
       </div>
     </div>
 
-    <div class="col-3">
-    </div>
-
     {# Selecionar a sala #}
-    <div class="col-4">
-      <span>{{ sala }}</span>
+    <div class="col-md-4 d-none d-md-flex gap-4 align-items-center justify-content-center">
+      {% include 'reservas/sala/select_sala.html' %}
     </div>
 
     {# Botão link para visualizar a sala na semana #}
-    <div class="col-4">
-
+    <div class="col-4 col-md-4 d-flex align-items-center justify-content-end">
+      <a href="/">Ver&nbsp;semana</a><i class="bi bi-calendar-week ms-2"></i>
     </div>
   </div>
 

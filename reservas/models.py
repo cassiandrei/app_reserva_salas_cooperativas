@@ -21,8 +21,14 @@ class Unidade(models.Model):
     ativo = models.BooleanField(default=True)
     todas_salas: models.Manager[Sala]
 
+    def get_primeira_sala(self):
+        return self.todas_salas.first()
+
     def get_absolute_url(self):
-        return reverse("reservas:unidade", kwargs={"slug": self.slug})
+        primeira_sala = self.get_primeira_sala()
+        if primeira_sala:
+            return reverse("reservas:sala", args=(self.get_primeira_sala().slug,))
+        return '#'
 
     def get_salas_ativas(self):
         return self.todas_salas.filter(ativo=True)
@@ -48,6 +54,9 @@ class Sala(models.Model):
         "reservas.Unidade", on_delete=models.PROTECT, related_name="todas_salas"
     )
     todas_reservas: models.Manager[Reserva]
+
+    class Meta:
+        ordering = ['unidade', 'slug']
 
     def __str__(self):
         return self.nome
@@ -92,10 +101,7 @@ class Sala(models.Model):
         return self.config.horario_encerramento
 
     def get_absolute_url(self):
-        return (
-                reverse("reservas:unidade", kwargs={"slug": self.unidade.slug})
-                + f"?sala={self.slug}"
-        )
+        return reverse("reservas:sala", args=(self.slug,))
 
 
 class Reserva(models.Model):
