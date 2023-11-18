@@ -1,11 +1,12 @@
 import datetime
+from functools import cached_property
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
 from core.utils import get_time_astimezone
-from reservas.models import Unidade, Sala
+from reservas.models import Unidade, Sala, Reserva
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.timezone import now
@@ -38,38 +39,30 @@ class SalaView(DetailView):
             return self.get_lista_salas().last()
         return sala
 
+    @cached_property
     def get_data_selecionada(self):
-        return now().date()
+        data_selecionada = self.request.GET.get('data_selecionada', None)
+        if data_selecionada:
+            data_selecionada = timezone.datetime.strptime(data_selecionada, '%Y-%m-%d').date()
+        else:
+            data_selecionada = now().date()
+        return data_selecionada
+
+    def get_reservas(self):
+        item: Reserva
+        return [
+            item.serialize() for item in self.object.get_reservas_no_dia(self.get_data_selecionada).iterator()
+        ]
 
     def get_context_data(self, **kwargs):
-        data_selecionada = self.get_data_selecionada()
+        data_selecionada = self.get_data_selecionada
         return {
             **super().get_context_data(**kwargs),
             "data_selecionada": data_selecionada,
+            "reservas": self.get_reservas(),
             "slotMinTime": self.object.get_horario_inicial(data_selecionada).strftime('%H:%M:%S'),
             "slotMaxTime": self.object.get_horario_termino(data_selecionada).strftime('%H:%M:%S')
         }
-
-
-@login_required
-def unidade(request, slug):
-    # pega a Unidade
-    unidade = get_object_or_404(Unidade, slug=slug)
-
-    # data selecionada do datepicker
-    # todo implementar get do datepicker
-    data_selecionada = now().date()
-
-    reservas = sala.get_reservas_no_dia(data_selecionada)
-
-    context = {
-        "unidade": unidade,
-        "sala": sala,
-        "data_selecionada": data_selecionada,
-        "slotMinTime": sala.get_horario_inicial(data_selecionada).strftime('%H:%M:%S'),
-        "slotMaxTime": sala.get_horario_termino(data_selecionada).strftime('%H:%M:%S')
-    }
-    return render(request, 'reservas/sala/index.html', context=context)
 
 
 def calendario(request, sala_slug, ano=None, semana=None):

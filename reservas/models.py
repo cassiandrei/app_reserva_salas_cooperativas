@@ -126,7 +126,7 @@ class Reserva(models.Model):
         )
 
     def get_reserva_class(self):
-        now = now()
+        now = timezone.now()
         if self.horario_termino < now:
             return "reserva_encerrada"
         elif self.horario_inicio <= now <= self.horario_termino:
@@ -137,8 +137,8 @@ class Reserva(models.Model):
     def serialize(self):
         return {
             "title": self.titulo,
-            "start": self.horario_inicio.strftime("%Y-%m-%dT%H:%M:%S"),
-            "end": self.horario_termino.strftime("%Y-%m-%dT%H:%M:%S"),
+            "start": timezone.localtime(self.horario_inicio).strftime("%Y-%m-%dT%H:%M:%S"),
+            "end": timezone.localtime(self.horario_termino).strftime("%Y-%m-%dT%H:%M:%S"),
             "class": self.get_reserva_class(),
         }
 

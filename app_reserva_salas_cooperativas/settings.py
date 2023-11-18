@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'app_reserva_salas_cooperativas.urls'
@@ -129,6 +130,7 @@ LOGIN_URL = 'user:login'
 LOGOUT_REDIRECT_URL = 'core:index'
 
 from django.contrib.messages import constants as messages_constants
+
 MESSAGE_TAGS = {
     messages_constants.DEBUG: 'primary',
     messages_constants.INFO: 'info',

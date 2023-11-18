@@ -1,6 +1,6 @@
 from django.urls import path
 
-from reservas.views import unidade, UnidadesListView, calendario, SalaView
+from reservas.views import UnidadesListView, calendario, SalaView
 
 app_name = 'reservas'
 urlpatterns = [
