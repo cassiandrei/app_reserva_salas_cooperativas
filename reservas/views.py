@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
 from core.utils import get_time_astimezone
+from reservas.mixins import SalasAtivasMixin, ReservasSalaMixin
 from reservas.models import Unidade, Sala, Reserva
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -19,9 +20,8 @@ class UnidadesListView(LoginRequiredMixin, ListView):
     context_object_name = "unidades"
 
 
-class SalaView(DetailView):
+class SalaView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, DetailView):
     object: Sala
-    model = Sala
     template_name = 'reservas/sala/index.html'
 
     def get_lista_salas(self):
@@ -39,20 +39,8 @@ class SalaView(DetailView):
             return self.get_lista_salas().last()
         return sala
 
-    @cached_property
-    def get_data_selecionada(self):
-        data_selecionada = self.request.GET.get('data_selecionada', None)
-        if data_selecionada:
-            data_selecionada = timezone.datetime.strptime(data_selecionada, '%Y-%m-%d').date()
-        else:
-            data_selecionada = now().date()
-        return data_selecionada
-
-    def get_reservas(self):
-        item: Reserva
-        return [
-            item.serialize() for item in self.object.get_reservas_no_dia(self.get_data_selecionada).iterator()
-        ]
+    def get_reservas_queryset(self):
+        return self.object.get_reservas_no_dia(self.get_data_selecionada)
 
     def get_context_data(self, **kwargs):
         data_selecionada = self.get_data_selecionada
@@ -62,6 +50,21 @@ class SalaView(DetailView):
             "reservas": self.get_reservas(),
             "slotMinTime": self.object.get_horario_inicial(data_selecionada).strftime('%H:%M:%S'),
             "slotMaxTime": self.object.get_horario_termino(data_selecionada).strftime('%H:%M:%S')
+        }
+
+
+class CalendarioView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, DetailView):
+    object: Sala
+    template_name = "reservas/sala/calendario.html"
+
+    def get_reservas_queryset(self):
+        return self.object.get_reservas_na_semana(2023, 10)
+
+    def get_context_data(self, **kwargs):
+        data_selecionada = self.get_data_selecionada
+        return {
+            **super().get_context_data(**kwargs),
+            "reservas": self.get_reservas(),
         }
 
 
