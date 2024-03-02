@@ -1,11 +1,6 @@
 import datetime
-from functools import cached_property
 
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-
-from core.utils import get_time_astimezone
 from reservas.mixins import SalasAtivasMixin, ReservasSalaMixin
 from reservas.models import Unidade, Sala, Reserva
 from django.views.generic import ListView, DetailView
@@ -56,15 +51,18 @@ class SalaView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, DetailVi
 class CalendarioView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, DetailView):
     object: Sala
     template_name = "reservas/sala/calendario.html"
+    slug_url_kwarg = "sala_slug"
+
 
     def get_reservas_queryset(self):
-        return self.object.get_reservas_na_semana(2023, 10)
+        return self.object.get_reservas_na_semana(self.get_data_selecionada.year, self.get_semana_selecionada)
 
     def get_context_data(self, **kwargs):
-        data_selecionada = self.get_data_selecionada
         return {
             **super().get_context_data(**kwargs),
             "reservas": self.get_reservas(),
+            "slotMinTime": '2024-02-25',
+            "slotMaxTime": '2024-03-02',
         }
 
 

@@ -1,138 +1,140 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block extra_css %}
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
 {% endblock %}
 
 {% block title %}{{ unidade }}{% endblock %}
 
 {% block content %}
 
-  <div class="row mb-3 mt-2 justify-content-between">
+    <div class="row mb-3 mt-2 justify-content-between">
 
-    {# Selecionar a sala #}
-    <div class="col-12 d-md-none gap-4 d-flex align-items-center justify-content-center">
-      {% include 'reservas/sala/select_sala.html' %}
+        {# Selecionar a sala #}
+        <div class="col-12 d-md-none gap-4 d-flex align-items-center justify-content-center">
+            {% include 'reservas/sala/select_sala.html' %}
+        </div>
+
+
+        {# Selecionar data #}
+        <div class="col-4 d-flex align-items-center">
+            <div class="input-group">
+                <button type="button" class="btn btn-sm btn-outline-secondary text-nowrap"
+                        id="componente_selecionar_data"><i
+                        class="bi bi-calendar"></i> {{ data_selecionada|date:"F d" }}
+                </button>
+            </div>
+        </div>
+
+        {# Selecionar a sala #}
+        <div class="col-md-4 d-none d-md-flex gap-4 align-items-center justify-content-center">
+            {% include 'reservas/sala/select_sala.html' %}
+        </div>
+
+        {# Botão link para visualizar a sala na semana #}
+        <div class="col-4 col-md-4 d-flex align-items-center justify-content-end">
+            <a href="{% url 'reservas:calendario_com_semana' object.slug view.get_data_selecionada.year view.get_semana_selecionada %}">Ver&nbsp;semana</a><i
+                class="bi bi-calendar-week ms-2"></i>
+        </div>
     </div>
 
+    <style>
+        .Sala_cover {
+            height: 500px;
+        }
 
-    {# Selecionar data #}
-    <div class="col-4 d-flex align-items-center">
-      <div class="input-group">
-        <button type="button" class="btn btn-sm btn-outline-secondary text-nowrap" id="componente_selecionar_data"><i
-                class="bi bi-calendar"></i> {{ data_selecionada|date:"F d" }}
-        </button>
-      </div>
+        @media (max-width: 768px) {
+            .Sala_cover {
+                height: 300px;
+            }
+        }
+
+
+    </style>
+
+    <div class="row">
+        <img id="imagem_sala" src="{{ sala.imagem.url }}"
+             class="d-block w-100 Sala_cover" alt="...">
     </div>
 
-    {# Selecionar a sala #}
-    <div class="col-md-4 d-none d-md-flex gap-4 align-items-center justify-content-center">
-      {% include 'reservas/sala/select_sala.html' %}
+    <div class="row mt-3">
+        <div id="timegrid"></div>
     </div>
-
-    {# Botão link para visualizar a sala na semana #}
-    <div class="col-4 col-md-4 d-flex align-items-center justify-content-end">
-      <a href="/">Ver&nbsp;semana</a><i class="bi bi-calendar-week ms-2"></i>
-    </div>
-  </div>
-
-  <style>
-      .Sala_cover {
-          height: 500px;
-      }
-
-      @media (max-width: 768px) {
-          .Sala_cover {
-              height: 300px;
-          }
-      }
-
-
-  </style>
-
-  <div class="row">
-    <img id="imagem_sala" src="{{ sala.imagem.url }}"
-         class="d-block w-100 Sala_cover" alt="...">
-  </div>
-
-  <div class="row mt-3">
-    <div id="timegrid"></div>
-  </div>
 
 
 {% endblock %}
 
 {% block extra_js %}
-  <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
-  <script>
-      let page_loaded = false;
-      var picker = new Pikaday({
-          field: document.getElementById('componente_selecionar_data'),
-          toString(date, format) {
-              // you should do formatting based on the passed format,
-              // but we will just return 'D/M/YYYY' for simplicity
-              return date.toLocaleDateString(undefined, {month: 'long', day: 'numeric'}).replace(' ', '&nbsp;')
-          },
-          parse(dateString, format) {
-              // dateString is the result of `toString` method
-              const parts = dateString.split('/');
-              const day = parseInt(parts[0], 10);
-              const month = parseInt(parts[1], 10) - 1;
-              const year = parseInt(parts[2], 10);
-              return new Date(year, month, day);
-          },
-          onSelect: function (date) {
-              var data_formatada = picker.toString();
-              {#$('#componente_selecionar_data').html('<i class="bi bi-calendar"></i>&nbsp;' + data_formatada);#}
-              let date_iso = date.toISOString().slice(0, 10);
-              if (!page_loaded) {
-                  page_loaded = true;
-              } else {
-                  location.href = `${location.pathname}?data_selecionada=${date_iso}`;
-              }
-          }
-      });
-      picker.setDate('{{ data_selecionada|date:"Y-m-d" }}T12:00');
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+    <script>
+        let page_loaded = false;
+        var picker = new Pikaday({
+            field: document.getElementById('componente_selecionar_data'),
+            toString(date, format) {
+                // you should do formatting based on the passed format,
+                // but we will just return 'D/M/YYYY' for simplicity
+                return date.toLocaleDateString(undefined, {month: 'long', day: 'numeric'}).replace(' ', '&nbsp;')
+            },
+            parse(dateString, format) {
+                // dateString is the result of `toString` method
+                const parts = dateString.split('/');
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10) - 1;
+                const year = parseInt(parts[2], 10);
+                return new Date(year, month, day);
+            },
+            onSelect: function (date) {
+                var data_formatada = picker.toString();
+                {#$('#componente_selecionar_data').html('<i class="bi bi-calendar"></i>&nbsp;' + data_formatada);#}
+                let date_iso = date.toISOString().slice(0, 10);
+                if (!page_loaded) {
+                    page_loaded = true;
+                } else {
+                    location.href = `${location.pathname}?data_selecionada=${date_iso}`;
+                }
+            }
+        });
+        picker.setDate('{{ data_selecionada|date:"Y-m-d" }}T12:00');
 
-  </script>
+    </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.9/index.global.js"></script>
-  <script>
-      function formatarHora(dateObj) {
-          return dateObj?.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-          });
-      }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.9/index.global.js"></script>
+    <script>
+        function formatarHora(dateObj) {
+            return dateObj?.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+        }
 
-      document.addEventListener("DOMContentLoaded", () => {
-          iniciarCalendario();
-      });
+        document.addEventListener("DOMContentLoaded", () => {
+            iniciarCalendario();
+        });
 
-      function iniciarCalendario() {
-          var calendarEl = document.getElementById("timegrid");
-          var calendar = new FullCalendar.Calendar(calendarEl, {
-              initialView: "timeGridDay",
-              locale: "pt-BR",
-              allDaySlot: false,
-              selectMirror: false,
-              selectLongPressDelay: 300,
-              eventLongPressDelay: 1,
-              eventMinHeight: 40,
-              selectable: true,
-              initialDate: '{{ data_selecionada|date:"Y-m-d" }}',
-              slotLabelFormat: {
-                  hour: "2-digit", // Use 2-digit format for hours (e.g., "01", "02", ..., "12")
-                  minute: "2-digit", // Use 2-digit format for minutes (e.g., "00", "15", "30", "45")
-                  omitZeroMinute: false, // Keep minutes with leading zero (e.g., "01:00" instead of "1:00")
-                  hour12: false, // Use 24-hour format (e.g., "00:00" to "23:00")
-              },
-              headerToolbar: false,
-              slotMinTime: "{{ slotMinTime }}",
-              slotMaxTime: "{{ slotMaxTime }}",
-              events: {{ reservas|safe }},
-              eventContent: (arg) => ({
-                  html: `
+        function iniciarCalendario() {
+            var calendarEl = document.getElementById("timegrid");
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: "timeGridDay",
+                locale: "pt-BR",
+                allDaySlot: false,
+                selectMirror: false,
+                selectLongPressDelay: 300,
+                eventLongPressDelay: 1,
+                eventMinHeight: 40,
+                selectable: true,
+                initialDate: '{{ data_selecionada|date:"Y-m-d" }}',
+                slotLabelFormat: {
+                    hour: "2-digit", // Use 2-digit format for hours (e.g., "01", "02", ..., "12")
+                    minute: "2-digit", // Use 2-digit format for minutes (e.g., "00", "15", "30", "45")
+                    omitZeroMinute: false, // Keep minutes with leading zero (e.g., "01:00" instead of "1:00")
+                    hour12: false, // Use 24-hour format (e.g., "00:00" to "23:00")
+                },
+                headerToolbar: false,
+                slotMinTime: "{{ slotMinTime }}",
+                slotMaxTime: "{{ slotMaxTime }}",
+                events: {{ reservas|safe }},
+                eventContent: (arg) => ({
+                    html: `
         <a
           class="d-flex flex-column h-100 px-1 w-100 text-light"
           style="text-decoration:none;"
@@ -145,56 +147,56 @@
         </div>
 
       </a>`,
-              }),
-              select: onSelect,
-          });
+                }),
+                select: onSelect,
+            });
 
-          function onSelect(arg) {
-              try {
-                  const reservas = calendar.getEvents();
-                  let start = null;
-                  let end = null;
-                  for (const reserva of reservas) {
-                      if (
-                          start === null &&
-                          reserva.start <= arg.start &&
-                          arg.start <= reserva.end
-                      ) {
-                          // incrementa um minuto
-                          start = new Date(reserva.end.getTime() + 60000);
-                      }
-                      if (
-                          end === null &&
-                          reserva.start <= arg.end &&
-                          arg.end <= reserva.end
-                      ) {
-                          // decrementa um minuto
-                          end = new Date(reserva.start.getTime() - 60000);
-                      }
-                  }
-                  if (end === null) {
-                      end = arg.end;
-                  }
-                  if (start === null) {
-                      start = arg.start;
-                  }
-                  if (end > start) {
-                      document.getElementById(
-                          "id_horario_inicio"
-                      ).value = start.toLocaleTimeString();
-                      console.log("abriria o modal");
-                      // document
-                      $("#cadastro").modal("show");
-                  }
-              } catch (e) {
-                  console.log("erro ao abrir modal ", e);
-              }
-          }
+            function onSelect(arg) {
+                try {
+                    const reservas = calendar.getEvents();
+                    let start = null;
+                    let end = null;
+                    for (const reserva of reservas) {
+                        if (
+                            start === null &&
+                            reserva.start <= arg.start &&
+                            arg.start <= reserva.end
+                        ) {
+                            // incrementa um minuto
+                            start = new Date(reserva.end.getTime() + 60000);
+                        }
+                        if (
+                            end === null &&
+                            reserva.start <= arg.end &&
+                            arg.end <= reserva.end
+                        ) {
+                            // decrementa um minuto
+                            end = new Date(reserva.start.getTime() - 60000);
+                        }
+                    }
+                    if (end === null) {
+                        end = arg.end;
+                    }
+                    if (start === null) {
+                        start = arg.start;
+                    }
+                    if (end > start) {
+                        document.getElementById(
+                            "id_horario_inicio"
+                        ).value = start.toLocaleTimeString();
+                        console.log("abriria o modal");
+                        // document
+                        $("#cadastro").modal("show");
+                    }
+                } catch (e) {
+                    console.log("erro ao abrir modal ", e);
+                }
+            }
 
-          calendar.render();
-      }
+            calendar.render();
+        }
 
-  </script>
+    </script>
 {% endblock %}
 
 
