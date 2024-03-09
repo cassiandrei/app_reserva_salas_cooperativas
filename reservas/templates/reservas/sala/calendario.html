@@ -5,112 +5,92 @@
 
 {% block content %}
 
-  <div class="row mt-3">
-    <div id="timegrid"></div>
-  </div>
+    <div class="row mt-3">
+        <div id="timegrid"></div>
+    </div>
 
 
 {% endblock %}
 
 {% block extra_js %}
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.9/index.global.js"></script>
-  <script>
-      function formatarHora(dateObj) {
-          return dateObj?.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-          });
-      }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.9/index.global.js"></script>
+    <script>
+        function formatarHora(dateObj) {
+            return dateObj?.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+        }
 
-      document.addEventListener("DOMContentLoaded", () => {
-          iniciarCalendario();
-      });
+        document.addEventListener("DOMContentLoaded", () => {
+            iniciarCalendario();
+        });
 
-      function iniciarCalendario() {
-          var calendarEl = document.getElementById("timegrid");
-          var calendar = new FullCalendar.Calendar(calendarEl, {
-              initialView: "timeGridWeek",
-              allDaySlot: false,
-              selectMirror: false,
-              selectLongPressDelay: 300,
-              eventLongPressDelay: 1,
-              eventMinHeight: 40,
-              selectable: true,
-              slotLabelFormat: {
-                  hour: "2-digit", // Use 2-digit format for hours (e.g., "01", "02", ..., "12")
-                  minute: "2-digit", // Use 2-digit format for minutes (e.g., "00", "15", "30", "45")
-                  omitZeroMinute: false, // Keep minutes with leading zero (e.g., "01:00" instead of "1:00")
-                  hour12: false, // Use 24-hour format (e.g., "00:00" to "23:00")
-              },
-              headerToolbar: false,
-              slotMinTime: "{{ slotMinTime }}",
-              slotMaxTime: "{{ slotMaxTime }}",
-              events: {{ reservas|safe }},
-              eventContent: (arg) => ({
-                  html: `
-        <a
-          class="d-flex flex-column h-100 px-1 w-100 text-light"
-          style="text-decoration:none;"
-        >
+        function iniciarCalendario() {
 
-        <div style="flex:1 1 auto;"><b>${arg.event.title}</b></div>
+            var calendarEl = document.getElementById("timegrid");
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: "pt-BR",
+                initialView: "timeGridWeek",
+                slotMinTime: "{{ slotMinTime }}",
+                slotMaxTime: "{{ slotMaxTime }}",
+                slotLabelFormat: {
+                    hour: "2-digit", // Use 2-digit format for hours (e.g., "01", "02", ..., "12")
+                    minute: "2-digit", // Use 2-digit format for minutes (e.g., "00", "15", "30", "45")
+                    omitZeroMinute: false, // Keep minutes with leading zero (e.g., "01:00" instead of "1:00")
+                    hour12: false, // Use 24-hour format (e.g., "00:00" to "23:00")
+                },
+                allDaySlot: false,
+                events: {{ reservas|safe }},
+            });
 
-        <div class="d-flex justify-content-end">
-          ${formatarHora(arg.event.start)} - ${formatarHora(arg.event.end)}
-        </div>
+            function onSelect(arg) {
+                try {
+                    const reservas = calendar.getEvents();
+                    let start = null;
+                    let end = null;
+                    for (const reserva of reservas) {
+                        if (
+                            start === null &&
+                            reserva.start <= arg.start &&
+                            arg.start <= reserva.end
+                        ) {
+                            // incrementa um minuto
+                            start = new Date(reserva.end.getTime() + 60000);
+                        }
+                        if (
+                            end === null &&
+                            reserva.start <= arg.end &&
+                            arg.end <= reserva.end
+                        ) {
+                            // decrementa um minuto
+                            end = new Date(reserva.start.getTime() - 60000);
+                        }
+                    }
+                    if (end === null) {
+                        end = arg.end;
+                    }
+                    if (start === null) {
+                        start = arg.start;
+                    }
+                    if (end > start) {
+                        document.getElementById(
+                            "id_horario_inicio"
+                        ).value = start.toLocaleTimeString();
+                        console.log("abriria o modal");
+                        // document
+                        $("#cadastro").modal("show");
+                    }
+                } catch (e) {
+                    console.log("erro ao abrir modal ", e);
+                }
+            }
 
-      </a>`,
-              }),
-              select: onSelect,
-          });
+            calendar.render();
+        }
 
-          function onSelect(arg) {
-              try {
-                  const reservas = calendar.getEvents();
-                  let start = null;
-                  let end = null;
-                  for (const reserva of reservas) {
-                      if (
-                          start === null &&
-                          reserva.start <= arg.start &&
-                          arg.start <= reserva.end
-                      ) {
-                          // incrementa um minuto
-                          start = new Date(reserva.end.getTime() + 60000);
-                      }
-                      if (
-                          end === null &&
-                          reserva.start <= arg.end &&
-                          arg.end <= reserva.end
-                      ) {
-                          // decrementa um minuto
-                          end = new Date(reserva.start.getTime() - 60000);
-                      }
-                  }
-                  if (end === null) {
-                      end = arg.end;
-                  }
-                  if (start === null) {
-                      start = arg.start;
-                  }
-                  if (end > start) {
-                      document.getElementById(
-                          "id_horario_inicio"
-                      ).value = start.toLocaleTimeString();
-                      console.log("abriria o modal");
-                      // document
-                      $("#cadastro").modal("show");
-                  }
-              } catch (e) {
-                  console.log("erro ao abrir modal ", e);
-              }
-          }
-
-          calendar.render();
-      }
-
-  </script>
+    </script>
 {% endblock %}
 
 

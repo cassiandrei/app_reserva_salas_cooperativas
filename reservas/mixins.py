@@ -23,7 +23,7 @@ class ReservasSalaMixin:
         return data_selecionada
 
     @cached_property
-    def get_semana_selecionada(self):
+    def get_semana_selecionada(self): # todo dia 09/03 paramos aqui
         return self.get_data_selecionada.isocalendar()[1]
 
     def get_reservas_queryset(self):

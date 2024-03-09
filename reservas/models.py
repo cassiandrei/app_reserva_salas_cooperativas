@@ -71,17 +71,24 @@ class Sala(models.Model):
 
     def get_reservas_na_semana(self, ano, semana):
         primeiro_dia_do_ano = datetime.date(ano, 1, 1)
-        primeiro_dia_semana_1 = primeiro_dia_do_ano - datetime.timedelta(
-            days=primeiro_dia_do_ano.weekday() + 1
-        )
-        data_inicio = primeiro_dia_semana_1 + datetime.timedelta(weeks=semana)
+
+        if primeiro_dia_do_ano.weekday() != 6:
+            # recuperar o domingo da semana 1
+            domingo_semana_1 = primeiro_dia_do_ano - datetime.timedelta(
+                days=primeiro_dia_do_ano.weekday() + 1
+            )
+        else:
+            # domingo é ele proprio
+            domingo_semana_1 = primeiro_dia_do_ano
+
+        data_inicio = domingo_semana_1 + datetime.timedelta(weeks=semana-1)
         data_fim = data_inicio + datetime.timedelta(days=6)
         reservas = self.todas_reservas.filter(
             horario_inicio__date__gte=data_inicio, horario_inicio__date__lte=data_fim
         )
         return reservas
 
-    def get_horario_inicial(self, data: datetime.date) -> datetime.time:
+    def get_horario_inicial_dia(self, data: datetime.date) -> datetime.time:
         reservas = self.get_reservas_no_dia(data)
         if reservas_anteriores := reservas.filter(
                 horario_inicio__time__lte=self.config.horario_abertura
@@ -89,8 +96,24 @@ class Sala(models.Model):
             return reservas_anteriores.first().horario_inicio.astimezone().time()
         return self.config.horario_abertura
 
-    def get_horario_termino(self, data: datetime.date) -> datetime.time:
+    def get_horario_termino_dia(self, data: datetime.date) -> datetime.time:
         reservas = self.get_reservas_no_dia(data)
+        if reservas_superiores := reservas.filter(
+                horario_termino__time__gte=self.config.horario_encerramento
+        ):
+            return reservas_superiores.last().horario_termino.astimezone().time()
+        return self.config.horario_encerramento
+
+    def get_horario_inicial_semana(self, ano: int, semana: int) -> datetime.time:
+        reservas = self.get_reservas_na_semana(ano, semana)
+        if reservas_anteriores := reservas.filter(
+                horario_inicio__time__lte=self.config.horario_abertura
+        ):
+            return reservas_anteriores.first().horario_inicio.astimezone().time()
+        return self.config.horario_abertura
+
+    def get_horario_termino_semana(self, ano: int, semana: int) -> datetime.time:
+        reservas = self.get_reservas_na_semana(ano, semana)
         if reservas_superiores := reservas.filter(
                 horario_termino__time__gte=self.config.horario_encerramento
         ):

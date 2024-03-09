@@ -1,11 +1,9 @@
-import datetime
+from functools import cached_property
 
-from django.shortcuts import render, get_object_or_404
 from reservas.mixins import SalasAtivasMixin, ReservasSalaMixin
-from reservas.models import Unidade, Sala, Reserva
+from reservas.models import Unidade, Sala
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.timezone import now
 
 
 # UNIDADES CLASS VIEW
@@ -43,8 +41,8 @@ class SalaView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, DetailVi
             **super().get_context_data(**kwargs),
             "data_selecionada": data_selecionada,
             "reservas": self.get_reservas(),
-            "slotMinTime": self.object.get_horario_inicial(data_selecionada).strftime('%H:%M:%S'),
-            "slotMaxTime": self.object.get_horario_termino(data_selecionada).strftime('%H:%M:%S')
+            "slotMinTime": self.object.get_horario_inicial_dia(data_selecionada).strftime('%H:%M:%S'),
+            "slotMaxTime": self.object.get_horario_termino_dia(data_selecionada).strftime('%H:%M:%S')
         }
 
 
@@ -53,32 +51,22 @@ class CalendarioView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, De
     template_name = "reservas/sala/calendario.html"
     slug_url_kwarg = "sala_slug"
 
-
     def get_reservas_queryset(self):
         return self.object.get_reservas_na_semana(self.get_data_selecionada.year, self.get_semana_selecionada)
 
+    @cached_property
+    def get_semana_selecionada(self):
+        if self.request.GET.get('data_selecionada', None):
+            return super().get_semana_selecionada
+        return int(self.kwargs['semana'])
+
     def get_context_data(self, **kwargs):
+        data_selecionada = self.get_data_selecionada
         return {
             **super().get_context_data(**kwargs),
             "reservas": self.get_reservas(),
-            "slotMinTime": '2024-02-25',
-            "slotMaxTime": '2024-03-02',
+            "slotMinTime": self.object.get_horario_inicial_semana(data_selecionada.year,
+                                                                  self.get_semana_selecionada).strftime('%H:%M:%S'),
+            "slotMaxTime": self.object.get_horario_termino_semana(data_selecionada.year,
+                                                                  self.get_semana_selecionada).strftime('%H:%M:%S')
         }
-
-
-def calendario(request, sala_slug, ano=None, semana=None):
-    # obtem a sala
-    sala = get_object_or_404(Sala, slug=sala_slug)
-    data_atual = now().date()
-
-    # pre definição do ano e semana
-    if not ano and not semana:
-        ano = data_atual.isocalendar()[0]  # year
-        semana = data_atual.isocalendar()[1]  # weeknumber
-
-    reservas = sala.get_reservas_na_semana(int(ano), int(semana))
-
-    context = {
-        reservas: reservas
-    }
-    return render(request, 'reservas/sala/calendario.html', context)

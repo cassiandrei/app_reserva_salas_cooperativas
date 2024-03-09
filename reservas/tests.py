@@ -208,7 +208,7 @@ class TelaCarroselUnidade(ReservasTest):
 
         # tem que exibir o horário inicial da sala no componente
         response = self.client_autenticado.get(url_sala)
-        horario_inicial_sala = sala.get_horario_inicial(dia_hoje)
+        horario_inicial_sala = sala.get_horario_inicial_dia(dia_hoje)
 
         # todo aplicar horario_inicial_sala
         self.assertContains(response, "")
