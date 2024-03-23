@@ -1,7 +1,9 @@
-<a href="{{ view.get_sala_anterior.get_absolute_url }}" class="text-dark">
-  <i style="font-size: x-large" class="bi bi-chevron-left"></i>
+<a {% if 'calendario' in request.path %}href="{% url 'reservas:calendario_com_semana' view.get_sala_anterior.slug view.kwargs.ano view.kwargs.semana %}"
+   {% else %}href="{{ view.get_sala_anterior.get_absolute_url }}"{% endif %} class="text-dark">
+    <i style="font-size: x-large" class="bi bi-chevron-left"></i>
 </a>
 <h5 class="mb-0">{{ sala }}</h5>
-<a href="{{ view.get_proxima_sala.get_absolute_url }}" class="text-dark">
-  <i style="font-size: x-large" class="bi bi-chevron-right"></i>
+<a {% if 'calendario' in request.path %}href="{% url 'reservas:calendario_com_semana' view.get_proxima_sala.slug view.kwargs.ano view.kwargs.semana %}"
+   {% else %}href="{{ view.get_proxima_sala.get_absolute_url }}"{% endif %} class="text-dark">
+    <i style="font-size: x-large" class="bi bi-chevron-right"></i>
 </a>

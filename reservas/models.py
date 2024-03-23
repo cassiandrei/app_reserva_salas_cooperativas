@@ -123,6 +123,9 @@ class Sala(models.Model):
     def get_absolute_url(self):
         return reverse("reservas:sala", args=(self.slug,))
 
+    def get_calendario_url(self):
+        return reverse("reservas:calendario_com_semana", args=(self.slug,))
+
 
 class Reserva(models.Model):
     titulo = models.CharField("Título", max_length=50)
