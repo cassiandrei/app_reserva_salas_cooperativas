@@ -1,3 +1,4 @@
+import datetime
 from functools import cached_property
 
 from reservas.mixins import SalasAtivasMixin, ReservasSalaMixin
@@ -52,7 +53,7 @@ class CalendarioView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, De
     slug_url_kwarg = "sala_slug"
 
     def get_reservas_queryset(self):
-        return self.object.get_reservas_na_semana(self.get_data_selecionada.year, self.get_semana_selecionada)
+        return self.object.get_reservas_na_semana(int(self.kwargs['ano']), self.get_semana_selecionada)
 
     @cached_property
     def get_semana_selecionada(self):
@@ -60,13 +61,37 @@ class CalendarioView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, De
             return super().get_semana_selecionada
         return int(self.kwargs['semana'])
 
+    @staticmethod
+    def get_data_initial(ano, semana):
+        dia_1_ano = datetime.date(ano, 1, 1)
+        return dia_1_ano + datetime.timedelta(days=7 * (semana - 1))
+
+    def get_next_week(self):
+        ano = int(self.kwargs['ano'])
+        semana = int(self.kwargs['semana']) + 1
+        return {
+            "ano": ano,
+            "semana": semana,
+        }
+
+    def get_previous_week(self):
+        ano = int(self.kwargs['ano'])
+        semana = int(self.kwargs['semana']) - 1
+        if semana == 0:
+            ano = ano - 1
+            semana = 52
+        return {
+            "ano": ano,
+            "semana": semana,
+        }
+
     def get_context_data(self, **kwargs):
-        data_selecionada = self.get_data_selecionada
         return {
             **super().get_context_data(**kwargs),
             "reservas": self.get_reservas(),
-            "slotMinTime": self.object.get_horario_inicial_semana(data_selecionada.year,
+            "data_inicial": self.get_data_initial(int(self.kwargs['ano']), int(self.kwargs['semana'])),
+            "slotMinTime": self.object.get_horario_inicial_semana(int(self.kwargs['ano']),
                                                                   self.get_semana_selecionada).strftime('%H:%M:%S'),
-            "slotMaxTime": self.object.get_horario_termino_semana(data_selecionada.year,
+            "slotMaxTime": self.object.get_horario_termino_semana(int(self.kwargs['ano']),
                                                                   self.get_semana_selecionada).strftime('%H:%M:%S')
         }

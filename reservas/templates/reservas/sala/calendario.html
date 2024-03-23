@@ -5,8 +5,40 @@
 
 {% block content %}
 
+    <style>
+        #timegrid {
+            overflow-x: auto;
+        }
+
+        .fc {
+            min-width: 1000px; /* Ajuste de acordo com a largura mínima desejada */
+        }
+
+        #calendario-div {
+            overflow-x: auto;
+            position: relative;
+        }
+
+    </style>
+
+
     <div class="row mt-3">
-        <div id="timegrid"></div>
+        <div class="col-12 mb-3">
+            <a href="{% url 'reservas:calendario_com_semana' object.slug view.get_next_week.ano view.get_next_week.semana %}"
+               title="Next week"
+               class="btn btn-primary float-end ms-3"><span class="fc-icon fc-icon-chevron-right"></span>
+            </a>
+            <a href="{% url 'reservas:calendario_com_semana' object.slug view.get_previous_week.ano view.get_previous_week.semana %}"
+               title="Previous week"
+               class="btn btn-primary float-end"><span
+                    class="fc-icon fc-icon-chevron-left"></span></button>
+            </a>
+
+        </div>
+        <div class="col-12" id="calendario-div">
+            <div id="timegrid"></div>
+        </div>
+
     </div>
 
 
@@ -33,8 +65,11 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: "pt-BR",
                 initialView: "timeGridWeek",
+                initialDate: '{{ data_inicial|date:"Y-m-d" }}',
                 slotMinTime: "{{ slotMinTime }}",
                 slotMaxTime: "{{ slotMaxTime }}",
+                headerToolbar: false,
+
                 slotLabelFormat: {
                     hour: "2-digit", // Use 2-digit format for hours (e.g., "01", "02", ..., "12")
                     minute: "2-digit", // Use 2-digit format for minutes (e.g., "00", "15", "30", "45")
