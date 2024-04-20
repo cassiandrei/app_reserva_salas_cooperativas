@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+{% endblock %}
+
+{% block title %}{{ unidade }}{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button>Salvar</button>
+        </form>
+    </div>
+
+{% endblock %}
+
+
+
+
+

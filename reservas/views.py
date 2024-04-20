@@ -1,9 +1,14 @@
 import datetime
 from functools import cached_property
 
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+from reservas.forms import ReservaForm
 from reservas.mixins import SalasAtivasMixin, ReservasSalaMixin, MixinTrocarSalaMixin
-from reservas.models import Unidade, Sala
-from django.views.generic import ListView, DetailView
+from reservas.models import Unidade, Sala, Reserva
+from django.views.generic import ListView, DetailView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -80,3 +85,40 @@ class CalendarioView(LoginRequiredMixin, SalasAtivasMixin, ReservasSalaMixin, Mi
             "slotMaxTime": self.object.get_horario_termino_semana(int(self.kwargs['ano']),
                                                                   self.get_semana_selecionada).strftime('%H:%M:%S')
         }
+
+
+class ReservaFormView(LoginRequiredMixin, ReservasSalaMixin, FormView):
+    object: Sala | None
+    form_class = ReservaForm
+    template_name = 'reservas/sala/reserva_form.html'
+
+    def get_object(self):
+        return Sala.objects.get(slug=self.kwargs['slug'])
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.ano = None
+        self.semana = None
+        self.object = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        instance: Reserva = form.save(commit=False)
+        instance.user = self.request.user
+        instance.sala = self.object
+        instance.save()
+        messages.success(self.request, 'Reserva criada com sucesso')
+        self.ano = instance.horario_inicio.year
+        self.semana = instance.horario_inicio.isocalendar()[1]
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        sala_slug = self.kwargs['slug']
+        return reverse('reservas:calendario_com_semana',
+                       kwargs={'sala_slug': sala_slug, 'ano': self.ano, 'semana': self.semana})
+
+    def get_sala_slug(self):
+        return

@@ -53,6 +53,9 @@ class ReservasSalaMixin:
             item.serialize() for item in self.get_reservas_queryset().iterator()
         ]
 
+    def get_sala_slug(self):
+        return self.get_object().slug
+
 
 class MixinTrocarSalaMixin:
     def get_lista_salas(self):
