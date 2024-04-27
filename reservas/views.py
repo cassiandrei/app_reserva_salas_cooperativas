@@ -106,10 +106,7 @@ class ReservaFormView(LoginRequiredMixin, ReservasSalaMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        instance: Reserva = form.save(commit=False)
-        instance.user = self.request.user
-        instance.sala = self.object
-        instance.save()
+        instance: Reserva = form.save()
         messages.success(self.request, 'Reserva criada com sucesso')
         self.ano = instance.horario_inicio.year
         self.semana = instance.horario_inicio.isocalendar()[1]
@@ -120,5 +117,10 @@ class ReservaFormView(LoginRequiredMixin, ReservasSalaMixin, FormView):
         return reverse('reservas:calendario_com_semana',
                        kwargs={'sala_slug': sala_slug, 'ano': self.ano, 'semana': self.semana})
 
-    def get_sala_slug(self):
-        return
+    def get_form_kwargs(self):
+        """Return the keyword arguments for instantiating the form."""
+        return {
+            **super().get_form_kwargs(),
+            'request': self.request,
+            'sala': self.object
+        }

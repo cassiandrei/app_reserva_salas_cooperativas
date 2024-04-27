@@ -7,7 +7,18 @@ class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
         fields = ['titulo', 'horario_inicio', 'horario_termino']
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'horario_inicio': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'horario_termino': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
+        }
 
-    def save(self, commit=True):
-        instance = super().save(commit)
-        return instance
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        self.sala = kwargs.pop('sala')
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        self.instance.user = self.request.user
+        self.instance.sala = self.sala
+        return super().clean()

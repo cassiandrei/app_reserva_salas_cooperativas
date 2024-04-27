@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import reverse
@@ -25,7 +26,7 @@ class Unidade(models.Model):
         primeira_sala = self.get_primeira_sala()
         if primeira_sala:
             return reverse("reservas:sala", args=(self.get_primeira_sala().slug,))
-        return '#'
+        return "#"
 
     def get_salas_ativas(self):
         return self.todas_salas.filter(ativo=True)
@@ -53,7 +54,7 @@ class Sala(models.Model):
     todas_reservas: models.Manager[Reserva]
 
     class Meta:
-        ordering = ['unidade', 'slug']
+        ordering = ["unidade", "slug"]
 
     def __str__(self):
         return self.nome
@@ -81,7 +82,7 @@ class Sala(models.Model):
             # domingo é ele proprio
             domingo_semana_1 = primeiro_dia_do_ano
 
-        data_inicio = domingo_semana_1 + datetime.timedelta(weeks=semana-1)
+        data_inicio = domingo_semana_1 + datetime.timedelta(weeks=semana - 1)
         data_fim = data_inicio + datetime.timedelta(days=6)
         reservas = self.todas_reservas.filter(
             horario_inicio__date__gte=data_inicio, horario_inicio__date__lte=data_fim
@@ -91,7 +92,7 @@ class Sala(models.Model):
     def get_horario_inicial_dia(self, data: datetime.date) -> datetime.time:
         reservas = self.get_reservas_no_dia(data)
         if reservas_anteriores := reservas.filter(
-                horario_inicio__time__lte=self.config.horario_abertura
+            horario_inicio__time__lte=self.config.horario_abertura
         ):
             return reservas_anteriores.first().horario_inicio.astimezone().time()
         return self.config.horario_abertura
@@ -99,7 +100,7 @@ class Sala(models.Model):
     def get_horario_termino_dia(self, data: datetime.date) -> datetime.time:
         reservas = self.get_reservas_no_dia(data)
         if reservas_superiores := reservas.filter(
-                horario_termino__time__gte=self.config.horario_encerramento
+            horario_termino__time__gte=self.config.horario_encerramento
         ):
             return reservas_superiores.last().horario_termino.astimezone().time()
         return self.config.horario_encerramento
@@ -107,7 +108,7 @@ class Sala(models.Model):
     def get_horario_inicial_semana(self, ano: int, semana: int) -> datetime.time:
         reservas = self.get_reservas_na_semana(ano, semana)
         if reservas_anteriores := reservas.filter(
-                horario_inicio__time__lte=self.config.horario_abertura
+            horario_inicio__time__lte=self.config.horario_abertura
         ):
             return reservas_anteriores.first().horario_inicio.astimezone().time()
         return self.config.horario_abertura
@@ -115,7 +116,7 @@ class Sala(models.Model):
     def get_horario_termino_semana(self, ano: int, semana: int) -> datetime.time:
         reservas = self.get_reservas_na_semana(ano, semana)
         if reservas_superiores := reservas.filter(
-                horario_termino__time__gte=self.config.horario_encerramento
+            horario_termino__time__gte=self.config.horario_encerramento
         ):
             return reservas_superiores.last().horario_termino.astimezone().time()
         return self.config.horario_encerramento
@@ -148,6 +149,39 @@ class Reserva(models.Model):
             f" - {timezone.localtime(self.horario_termino).strftime('%d/%m/%Y %H:%M')} - {reservada}"
         )
 
+    def duracao_reserva(self) -> int:
+        return int((self.horario_termino - self.horario_inicio).seconds / 60)
+
+    def has_conflito_horario(self) -> bool:
+        return self.sala.todas_reservas.filter(
+            models.Q(
+                horario_inicio__lte=self.horario_inicio,
+                horario_termino__gte=self.horario_inicio,
+            )
+            | models.Q(
+                horario_inicio__gte=self.horario_termino,
+                horario_termino__lte=self.horario_termino,
+            )
+        ).exists()
+
+    def clean(self):
+        if self.horario_termino <= self.horario_inicio:
+            raise ValidationError(
+                {"horario_termino": "Horário término deve ser maior que horário Início"}
+            )
+
+        if self.duracao_reserva() < self.sala.config.duracao_minima_reserva:
+            raise ValidationError(
+                {
+                    "horario_termino": f"A duração da reserva deve ser no minímo {self.sala.config.duracao_minima_reserva} minutos."
+                }
+            )
+
+        if self.has_conflito_horario():
+            raise ValidationError(
+                "Já existe outra reserva conflitando com esse período."
+            )
+
     def get_reserva_class(self):
         now = timezone.now()
         if self.horario_termino < now:
@@ -160,8 +194,12 @@ class Reserva(models.Model):
     def serialize(self):
         return {
             "title": self.titulo,
-            "start": timezone.localtime(self.horario_inicio).strftime("%Y-%m-%dT%H:%M:%S"),
-            "end": timezone.localtime(self.horario_termino).strftime("%Y-%m-%dT%H:%M:%S"),
+            "start": timezone.localtime(self.horario_inicio).strftime(
+                "%Y-%m-%dT%H:%M:%S"
+            ),
+            "end": timezone.localtime(self.horario_termino).strftime(
+                "%Y-%m-%dT%H:%M:%S"
+            ),
             "class": self.get_reserva_class(),
         }
 

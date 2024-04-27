@@ -1,21 +1,27 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
 {% endblock %}
 
 {% block title %}{{ unidade }}{% endblock %}
 
 {% block content %}
-
-    <div class="row">
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button>Salvar</button>
-        </form>
+    <div class="row justify-content-center align-items-center flex-grow-1 mx-0">
+        <div class="col col-8 col-md-4">
+            <form class="card" method="post">
+                <div class="card-header">
+                    <h5 class="card-title">Adicionar Nova Reserva</h5>
+                </div>
+                <div class="card-body">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
     </div>
-
 {% endblock %}
 
 

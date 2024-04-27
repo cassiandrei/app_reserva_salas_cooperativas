@@ -20,7 +20,7 @@
         }
 
         body {
-            padding-bottom: calc(var(--altura_footer) + 10px);
+            min-height: 100vh;
         }
 
         .footer {
@@ -48,6 +48,14 @@
             font-size: 1.5rem; /* Altere este valor para ajustar o tamanho do ícone */
             display: block;
         }
+        
+        .root{
+            min-height: 100vh !important;
+            display: flex;
+            flex-direction: column;
+            padding-top: 56px;
+            padding-bottom: 75px;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -56,7 +64,7 @@
 
 <body>
 <!-- header -->
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-light bg-light fixed-top">
     <div class="container">
 
         <div class="d-flex align-items-center">
@@ -78,7 +86,7 @@
 </nav>
 
 <!-- Conteúdo principal -->
-<div class="container">
+<div class="root">
     {% block content %}{% endblock %}
 </div>
 
