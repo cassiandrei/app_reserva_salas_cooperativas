@@ -48,8 +48,8 @@
             font-size: 1.5rem; /* Altere este valor para ajustar o tamanho do ícone */
             display: block;
         }
-        
-        .root{
+
+        .root {
             min-height: 100vh !important;
             display: flex;
             flex-direction: column;
@@ -87,7 +87,9 @@
 
 <!-- Conteúdo principal -->
 <div class="root">
-    {% block content %}{% endblock %}
+    <div class="row justify-content-center align-items-center flex-grow-1 mx-0">
+        {% block content %}{% endblock %}
+    </div>
 </div>
 
 <!-- Footer fixo com três botões -->
