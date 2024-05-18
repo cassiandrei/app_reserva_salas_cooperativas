@@ -164,6 +164,9 @@ class Reserva(models.Model):
             )
         ).exists()
 
+    def has_datas_diferentes_na_reserva(self) -> bool:
+        return self.horario_inicio.date() != self.horario_termino.date()
+
     def clean(self):
         if self.horario_termino <= self.horario_inicio:
             raise ValidationError(
@@ -180,6 +183,11 @@ class Reserva(models.Model):
         if self.has_conflito_horario():
             raise ValidationError(
                 "Já existe outra reserva conflitando com esse período."
+            )
+
+        if self.has_datas_diferentes_na_reserva():
+            raise ValidationError(
+                "Horário de início deve ser no mesmo dia do horário de término"
             )
 
     def get_reserva_class(self):

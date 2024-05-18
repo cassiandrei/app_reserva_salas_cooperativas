@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-{% load static %}
+{% load static crispy_forms_tags %}
 {% block extra_css %}
 {% endblock %}
 
@@ -9,13 +9,13 @@
         <div class="col col-8 col-md-4">
             <form class="card" method="post">
                 <div class="card-header">
-                    <h5 class="card-title">Adicionar Nova Reserva</h5>
+                    <h5 class="card-title">Adicionar nova reserva na sala {{ form.sala.unidade }} - {{ form.sala }}</h5>
                 </div>
                 <div class="card-body">
-                    {% csrf_token %}
-                    {{ form.as_p }}
+                    {% crispy form %}
                 </div>
-                <div class="card-footer text-end">
+                <div class="card-footer d-flex justify-content-between">
+                    <a href="{{ request.GET.previous|default_if_none:form.sala.get_absolute_url }}" class="btn btn-secondary">Voltar</a>
                     <button class="btn btn-primary">Salvar</button>
                 </div>
             </form>
