@@ -34,6 +34,8 @@ class ReservaForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
+        self.initial = self.request.GET
+
     def clean_horario_inicio(self):
         data = self.cleaned_data["data"]
         horario_inicio = self.cleaned_data["horario_inicio"]

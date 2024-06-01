@@ -190,7 +190,7 @@ class Reserva(models.Model):
                 "Horário de início deve ser no mesmo dia do horário de término"
             )
 
-    def get_reserva_class(self):
+    def get_reserva_status(self):
         now = timezone.now()
         if self.horario_termino < now:
             return "reserva_encerrada"
@@ -199,16 +199,40 @@ class Reserva(models.Model):
         else:
             return "reserva_reservada"
 
+    def get_evento_cor(self):
+        status_cores = {
+            "reserva_encerrada": {
+                "backgroundColor": "grey",
+                "borderColor": "grey",
+                "textColor": "000000",
+            },
+            "reserva_andamento": {
+                "backgroundColor": "#3788d8",
+                "borderColor": "#000000",
+                "textColor": "#FFFFFF",
+            },
+            "reserva_reservada": {
+                "backgroundColor": "#FCF442",
+                "borderColor": "#000000",
+                "textColor": "red",
+            },
+        }
+
+        if self.get_reserva_status() in status_cores:
+            return status_cores[self.get_reserva_status()]
+        return status_cores["reserva_andamento"]
+
     def serialize(self):
         return {
-            "title": self.titulo,
+            "title": f"{self.titulo} ({self.user.get_full_name()})",
             "start": timezone.localtime(self.horario_inicio).strftime(
                 "%Y-%m-%dT%H:%M:%S"
             ),
             "end": timezone.localtime(self.horario_termino).strftime(
                 "%Y-%m-%dT%H:%M:%S"
             ),
-            "class": self.get_reserva_class(),
+            "class": self.get_reserva_status(),
+            **self.get_evento_cor(),
         }
 
 

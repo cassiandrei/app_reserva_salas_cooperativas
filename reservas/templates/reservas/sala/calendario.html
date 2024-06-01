@@ -5,155 +5,172 @@
 
 {% block content %}
 
-    <style>
-        #timegrid {
-            overflow-x: auto;
-        }
+  <style>
+      #timegrid {
+          overflow-x: auto;
+      }
 
-        .fc {
-            min-width: 1000px; /* Ajuste de acordo com a largura mínima desejada */
-        }
+      .fc {
+          min-width: 1000px; /* Ajuste de acordo com a largura mínima desejada */
+      }
 
-        #calendario-div {
-            overflow-x: auto;
-            position: relative;
-        }
+      #calendario-div {
+          overflow-x: auto;
+          position: relative;
+      }
 
-        colgroup {
-            position: sticky;
-            z-index: 2;
-            left: 0;
-        }
+      colgroup {
+          position: sticky;
+          z-index: 2;
+          left: 0;
+      }
 
-    </style>
-
-
-    <div class="row mb-3 mt-2 justify-content-between">
-
-        {# Selecionar a sala #}
-        <div class="col-12 d-md-none gap-4 d-flex align-items-center justify-content-center">
-            {% include 'reservas/sala/select_sala.html' %}
-        </div>
+  </style>
 
 
-        {# Botão de voltar #}
-        <div class="col-4 d-flex align-items-center">
-            <a href="{% url 'reservas:sala' object.slug %}" class="btn btn-secondary">Voltar</a>
-        </div>
+  <div class="row mb-3 mt-2 justify-content-between">
 
-        {# Selecionar a sala #}
-        <div class="col-md-4 d-none d-md-flex gap-4 align-items-center justify-content-center">
-            {% include 'reservas/sala/select_sala.html' %}
-        </div>
-
-        {#  #}
-        <div class="col-4 col-md-4 d-flex align-items-center justify-content-end">
-
-            <a href="{% url 'reservas:calendario_com_semana' object.slug view.get_previous_week.ano view.get_previous_week.semana %}"
-               title="Previous week"
-               class="btn btn-primary float-end"><span
-                    class="fc-icon fc-icon-chevron-left"></span></button>
-            </a>
-            <a href="{% url 'reservas:calendario_com_semana' object.slug view.get_next_week.ano view.get_next_week.semana %}"
-               title="Next week"
-               class="btn btn-primary float-end ms-3"><span class="fc-icon fc-icon-chevron-right"></span>
-            </a>
-
-        </div>
+    {# Selecionar a sala #}
+    <div class="col-12 d-md-none gap-4 d-flex align-items-center justify-content-center">
+      {% include 'reservas/sala/select_sala.html' %}
     </div>
 
 
-    <div class="row mt-3">
-        <div class="col-12" id="calendario-div">
-            <div id="timegrid"></div>
-        </div>
+    {# Botão de voltar #}
+    <div class="col-4 d-flex align-items-center">
+      <a href="{% url 'reservas:sala' object.slug %}" class="btn btn-secondary">Voltar</a>
     </div>
+
+    {# Selecionar a sala #}
+    <div class="col-md-4 d-none d-md-flex gap-4 align-items-center justify-content-center">
+      {% include 'reservas/sala/select_sala.html' %}
+    </div>
+
+    {#  #}
+    <div class="col-4 col-md-4 d-flex align-items-center justify-content-end">
+
+      <a href="{% url 'reservas:calendario_com_semana' object.slug view.get_previous_week.ano view.get_previous_week.semana %}"
+         title="Previous week"
+         class="btn btn-primary float-end"><span
+          class="fc-icon fc-icon-chevron-left"></span></button>
+      </a>
+      <a href="{% url 'reservas:calendario_com_semana' object.slug view.get_next_week.ano view.get_next_week.semana %}"
+         title="Next week"
+         class="btn btn-primary float-end ms-3"><span class="fc-icon fc-icon-chevron-right"></span>
+      </a>
+
+    </div>
+  </div>
+
+
+  <div class="row mt-3">
+    <div class="col-12" id="calendario-div">
+      <div id="timegrid"></div>
+    </div>
+  </div>
 
 
 {% endblock %}
 
 {% block extra_js %}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.9/index.global.js"></script>
-    <script>
-        function formatarHora(dateObj) {
-            return dateObj?.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-            });
-        }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.9/index.global.js"></script>
+  <script>
+      function formatarHora(dateObj) {
+          return dateObj?.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+          });
+      }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            iniciarCalendario();
-        });
+      document.addEventListener("DOMContentLoaded", () => {
+          iniciarCalendario();
+      });
 
-        function iniciarCalendario() {
+      function iniciarCalendario() {
 
-            var calendarEl = document.getElementById("timegrid");
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                locale: "pt-BR",
-                initialView: "timeGridWeek",
-                initialDate: '{{ data_inicial|date:"Y-m-d" }}',
-                slotMinTime: "{{ slotMinTime }}",
-                slotMaxTime: "{{ slotMaxTime }}",
-                headerToolbar: false,
+          var calendarEl = document.getElementById("timegrid");
+          var calendar = new FullCalendar.Calendar(calendarEl, {
+              locale: "pt-BR",
+              initialView: "timeGridWeek",
+              initialDate: '{{ data_inicial|date:"Y-m-d" }}',
+              slotMinTime: "{{ slotMinTime }}",
+              slotMaxTime: "{{ slotMaxTime }}",
+              headerToolbar: false,
 
-                slotLabelFormat: {
-                    hour: "2-digit", // Use 2-digit format for hours (e.g., "01", "02", ..., "12")
-                    minute: "2-digit", // Use 2-digit format for minutes (e.g., "00", "15", "30", "45")
-                    omitZeroMinute: false, // Keep minutes with leading zero (e.g., "01:00" instead of "1:00")
-                    hour12: false, // Use 24-hour format (e.g., "00:00" to "23:00")
-                },
-                allDaySlot: false,
-                events: {{ reservas|safe }},
-            });
+              slotLabelFormat: {
+                  hour: "2-digit", // Use 2-digit format for hours (e.g., "01", "02", ..., "12")
+                  minute: "2-digit", // Use 2-digit format for minutes (e.g., "00", "15", "30", "45")
+                  omitZeroMinute: false, // Keep minutes with leading zero (e.g., "01:00" instead of "1:00")
+                  hour12: false, // Use 24-hour format (e.g., "00:00" to "23:00")
+              },
+              allDaySlot: false,
+              events: {{ reservas|safe }},
+              selectable: true,
+              editable: false, // Permite mover eventos
 
-            function onSelect(arg) {
-                try {
-                    const reservas = calendar.getEvents();
-                    let start = null;
-                    let end = null;
-                    for (const reserva of reservas) {
-                        if (
-                            start === null &&
-                            reserva.start <= arg.start &&
-                            arg.start <= reserva.end
-                        ) {
-                            // incrementa um minuto
-                            start = new Date(reserva.end.getTime() + 60000);
-                        }
-                        if (
-                            end === null &&
-                            reserva.start <= arg.end &&
-                            arg.end <= reserva.end
-                        ) {
-                            // decrementa um minuto
-                            end = new Date(reserva.start.getTime() - 60000);
-                        }
-                    }
-                    if (end === null) {
-                        end = arg.end;
-                    }
-                    if (start === null) {
-                        start = arg.start;
-                    }
-                    if (end > start) {
-                        document.getElementById(
-                            "id_horario_inicio"
-                        ).value = start.toLocaleTimeString();
-                        console.log("abriria o modal");
-                        // document
-                        $("#cadastro").modal("show");
-                    }
-                } catch (e) {
-                    console.log("erro ao abrir modal ", e);
-                }
-            }
+              // Evento de seleção
+              select: function (info) {
+                  const date = info.start.toISOString().slice(0, 10);  // Extrai a data em formato ISO
+                  const startTime = new Date(info.startStr).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                  });  // Extrai hora de início
+                  const endTime = new Date(info.endStr).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});  // Extrai hora de término
+                  const allDay = info.allDay;  // Booleano se o evento é o dia todo
 
-            calendar.render();
-        }
+                  // Construir a URL para a página de criação do evento
+                  const url = `{% url 'reservas:adicionar_reserva' object.slug %}?previous={{ request.path }}&data=${encodeURIComponent(date)}&horario_inicio=${encodeURIComponent(startTime)}&horario_termino=${encodeURIComponent(endTime)}`;
+                  window.location.href = url;  // Redirecionar para a URL
+              },
+          });
 
-    </script>
+          function onSelect(arg) {
+              try {
+                  const reservas = calendar.getEvents();
+                  let start = null;
+                  let end = null;
+                  for (const reserva of reservas) {
+                      if (
+                          start === null &&
+                          reserva.start <= arg.start &&
+                          arg.start <= reserva.end
+                      ) {
+                          // incrementa um minuto
+                          start = new Date(reserva.end.getTime() + 60000);
+                      }
+                      if (
+                          end === null &&
+                          reserva.start <= arg.end &&
+                          arg.end <= reserva.end
+                      ) {
+                          // decrementa um minuto
+                          end = new Date(reserva.start.getTime() - 60000);
+                      }
+                  }
+                  if (end === null) {
+                      end = arg.end;
+                  }
+                  if (start === null) {
+                      start = arg.start;
+                  }
+                  if (end > start) {
+                      document.getElementById(
+                          "id_horario_inicio"
+                      ).value = start.toLocaleTimeString();
+                      console.log("abriria o modal");
+                      // document
+                      $("#cadastro").modal("show");
+                  }
+              } catch (e) {
+                  console.log("erro ao abrir modal ", e);
+              }
+          }
+
+          calendar.render();
+      }
+
+  </script>
 {% endblock %}
 
 
